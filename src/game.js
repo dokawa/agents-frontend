@@ -2,29 +2,32 @@ import React, { useEffect, useRef } from 'react';
 import Phaser from 'phaser';
 
 const Game = () => {
-  const gameContainerRef = useRef(null);
-  const cursorsRef = useRef(null);
-  const playerRef = useRef(null);
+    const gameContainerRef = useRef(null);
+//   const cursors = useRef(null);
+//   const player = useRef(null);
 
-  useEffect(() => {
+    let player
+    let cursors
+
+
     const config = {
-      type: Phaser.AUTO,
-      width: 800,
-      height: 600,
-      parent: gameContainerRef.current,
-      pixelArt: true,
-      physics: {
-        default: 'arcade',
-        arcade: {
-          gravity: { y: 0 },
+        type: Phaser.AUTO,
+        width: 800,
+        height: 600,
+        parent: "game-container",
+        pixelArt: true,
+        physics: {
+          default: "arcade",
+          arcade: {
+            gravity: { y: 0 }
+          }
         },
-      },
-      scene: {
-        preload: preload,
-        create: create,
-        update: update,
-      },
-    };
+        scene: {
+          preload: preload,
+          create: create,
+          update: update
+        }
+      }
 
     const game = new Phaser.Game(config);
 
@@ -59,12 +62,12 @@ const Game = () => {
 
       const spawnPoint = map.findObject('Objects', (obj) => obj.name === 'Spawn Point');
 
-      playerRef.current = this.physics.add
+      player = this.physics.add
         .sprite(spawnPoint.x, spawnPoint.y, 'atlas', 'misa-front')
         .setSize(30, 40)
         .setOffset(0, 24);
 
-      this.physics.add.collider(playerRef.current, worldLayer);
+      this.physics.add.collider(player, worldLayer);
 
       const anims = this.anims;
       anims.create({
@@ -93,10 +96,10 @@ const Game = () => {
       });
 
       const camera = this.cameras.main;
-      camera.startFollow(playerRef.current);
+      camera.startFollow(player);
       camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-      cursorsRef.current = this.input.keyboard.createCursorKeys();
+      cursors = this.input.keyboard.createCursorKeys();
 
       this.add
         .text(16, 16, 'Arrow keys to move\nPress "D" to show hitboxes', {
@@ -125,42 +128,42 @@ const Game = () => {
 
     function update(time, delta) {
       const speed = 175;
-      const prevVelocity = playerRef.current.body.velocity.clone();
+      const prevVelocity = player.body.velocity.clone();
 
-      playerRef.current.body.setVelocity(0);
+      player.body.setVelocity(0);
 
-      if (cursorsRef.current.left.isDown) {
-        playerRef.current.body.setVelocityX(-speed);
-      } else if (cursorsRef.current.right.isDown) {
-        playerRef.current.body.setVelocityX(speed);
+      if (cursors.left.isDown) {
+        player.body.setVelocityX(-speed);
+      } else if (cursors.right.isDown) {
+        player.body.setVelocityX(speed);
       }
 
-      if (cursorsRef.current.up.isDown) {
-        playerRef.current.body.setVelocityY(-speed);
-      } else if (cursorsRef.current.down.isDown) {
-        playerRef.current.body.setVelocityY(speed);
+      if (cursors.up.isDown) {
+        player.body.setVelocityY(-speed);
+      } else if (cursors.down.isDown) {
+        player.body.setVelocityY(speed);
       }
 
-      playerRef.current.body.velocity.normalize().scale(speed);
+      player.body.velocity.normalize().scale(speed);
 
-      if (cursorsRef.current.left.isDown) {
-        playerRef.current.anims.play('misa-left-walk', true);
-      } else if (cursorsRef.current.right.isDown) {
-        playerRef.current.anims.play('misa-right-walk', true);
-      } else if (cursorsRef.current.up.isDown) {
-        playerRef.current.anims.play('misa-back-walk', true);
-      } else if (cursorsRef.current.down.isDown) {
-        playerRef.current.anims.play('misa-front-walk', true);
+      if (cursors.left.isDown) {
+        player.anims.play('misa-left-walk', true);
+      } else if (cursors.right.isDown) {
+        player.anims.play('misa-right-walk', true);
+      } else if (cursors.up.isDown) {
+        player.anims.play('misa-back-walk', true);
+      } else if (cursors.down.isDown) {
+        player.anims.play('misa-front-walk', true);
       } else {
-        playerRef.current.anims.stop();
+        player.anims.stop();
 
-        if (prevVelocity.x < 0) playerRef.current.setTexture('atlas', 'misa-left');
-        else if (prevVelocity.x > 0) playerRef.current.setTexture('atlas', 'misa-right');
-        else if (prevVelocity.y < 0) playerRef.current.setTexture('atlas', 'misa-back');
-        else if (prevVelocity.y > 0) playerRef.current.setTexture('atlas', 'misa-front');
+        if (prevVelocity.x < 0) player.setTexture('atlas', 'misa-left');
+        else if (prevVelocity.x > 0) player.setTexture('atlas', 'misa-right');
+        else if (prevVelocity.y < 0) player.setTexture('atlas', 'misa-back');
+        else if (prevVelocity.y > 0) player.setTexture('atlas', 'misa-front');
       }
     }
-  }, []);
+
 
   return <div ref={gameContainerRef}></div>;
 };
