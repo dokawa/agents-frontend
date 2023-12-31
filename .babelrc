@@ -1,0 +1,27 @@
+{
+  "presets": [
+  ],
+  "plugins": [
+        "add-module-exports"
+  ],
+  "env": {
+    "test": {
+    },
+    "production": {
+      "presets": [
+        [
+          "env",
+          {
+            "modules": false
+          }
+        ],
+        "react"
+      ],
+      "plugins": [
+        "add-module-exports",
+        "transform-runtime",
+        "transform-decorators-legacy"
+      ]
+    }
+  }
+}
