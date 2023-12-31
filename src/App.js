@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import Phaser from 'phaser';
 import Game from './game'
 
 function App() {
