@@ -1,23 +1,28 @@
 import logo from './logo.svg';
 import './App.css';
+import React, { useEffect, useRef } from 'react';
+import Phaser from 'phaser';
 
 function App() {
+  const containerStyle = {
+    margin: 0,
+    padding: 0,
+    minWidth: '100vw',
+    minHeight: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+
+  const canvasStyle = {
+    borderRadius: '5px',
+  };
+
+  
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div id="game-container" style={containerStyle}>
+      <canvas style={canvasStyle}></canvas>
     </div>
   );
 }
