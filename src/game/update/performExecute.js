@@ -1,4 +1,10 @@
-import { PLAY_SPEED } from "../../constants"
+import {
+	PLAY_SPEED,
+	PRONUNCIATIO_X_OFFSET,
+	PRONUNCIATIO_Y_OFFSET,
+	SPEECH_BUBBLE_X_OFFSET,
+	SPEECH_BUBBLE_Y_OFFSET,
+} from "../../constants"
 
 const movement_speed = PLAY_SPEED
 const movement_target = {}
@@ -7,6 +13,7 @@ const pre_anims_direction_dict = {}
 
 export const performExecutePhase = (
 	personas,
+	speech_bubbles,
 	pronunciatios,
 	execute_movement,
 	execute_count,
@@ -18,6 +25,7 @@ export const performExecutePhase = (
 	for (let i = 0; i < Object.keys(personas).length; i++) {
 		let curr_persona_name = Object.keys(personas)[i]
 		let curr_persona = personas[curr_persona_name]
+		let curr_speech_bubble = speech_bubbles[Object.keys(personas)[i]]
 		let curr_pronunciatio = pronunciatios[Object.keys(personas)[i]]
 
 		const personaAction = execute_movement["persona"][curr_persona_name]
@@ -27,12 +35,8 @@ export const performExecutePhase = (
 			let curr_y = personaAction["movement"][1]
 			movement_target[curr_persona_name] = [curr_x * tileWidth, curr_y * tileWidth]
 			let pronunciatio_content = personaAction["pronunciatio"]
-			// This is what gives the pronunciatio balloon the name initials. We
-			// use regex to extract the initials of the personas.
-			// E.g., "Dolores Murphy" -> "DM"
-			let rgx = new RegExp(/(\p{L}{1})\p{L}+/, "gu")
-			let initials = [...curr_persona_name.matchAll(rgx)] || []
-			initials = ((initials.shift()?.[1] || "") + (initials.pop()?.[1] || "")).toUpperCase()
+
+			let initials = getInitials(curr_persona_name)
 			pronunciatios[curr_persona_name].setText(initials + ": " + pronunciatio_content)
 		}
 
@@ -58,31 +62,12 @@ export const performExecutePhase = (
 				anims_direction = ""
 			}
 
-			curr_pronunciatio.x = curr_persona.body.x - 6
-			curr_pronunciatio.y = curr_persona.body.y - 42 - 32 // DEBUG 1 --- I added 32 offset on Dec 29.
+			curr_pronunciatio.x = curr_persona.body.x + PRONUNCIATIO_X_OFFSET
+			curr_pronunciatio.y = curr_persona.body.y + PRONUNCIATIO_Y_OFFSET
+			curr_speech_bubble.x = curr_persona.body.x + SPEECH_BUBBLE_X_OFFSET
+			curr_speech_bubble.y = curr_persona.body.y + SPEECH_BUBBLE_Y_OFFSET
 
-			if (anims_direction == "l") {
-				curr_persona.anims.play(curr_persona_name + "-left-walk", true)
-			} else if (anims_direction == "r") {
-				curr_persona.anims.play(curr_persona_name + "-right-walk", true)
-			} else if (anims_direction == "u") {
-				curr_persona.anims.play(curr_persona_name + "-up-walk", true)
-			} else if (anims_direction == "d") {
-				curr_persona.anims.play(curr_persona_name + "-down-walk", true)
-			} else {
-				curr_persona.anims.stop()
-
-				// If we were moving, pick an idle frame to use
-				if (pre_anims_direction_dict[curr_persona_name] == "l")
-					curr_persona.setTexture(curr_persona_name, "left")
-				else if (pre_anims_direction_dict[curr_persona_name] == "r")
-					curr_persona.setTexture(curr_persona_name, "right")
-				else if (pre_anims_direction_dict[curr_persona_name] == "u")
-					curr_persona.setTexture(curr_persona_name, "up")
-				else if (pre_anims_direction_dict[curr_persona_name] == "d")
-					curr_persona.setTexture(curr_persona_name, "down")
-				// console.log("curr_persona", curr_persona)
-			}
+			playAnimation(curr_persona, curr_persona_name)
 		} else {
 			// Once we are done moving the personas, we move on to the "process"
 			// stage where we will send the current locations of all personas at the
@@ -130,4 +115,37 @@ export const performExecutePhase = (
 
 	execute_count = execute_count - 1
 	return { execute_count, phase, step }
+}
+const getInitials = (curr_persona_name) => {
+	// This is what gives the pronunciatio balloon the name initials. We
+	// use regex to extract the initials of the personas.
+	// E.g., "Dolores Murphy" -> "DM"
+	let rgx = new RegExp(/(\p{L}{1})\p{L}+/, "gu")
+	let initials = [...curr_persona_name.matchAll(rgx)] || []
+	initials = ((initials.shift()?.[1] || "") + (initials.pop()?.[1] || "")).toUpperCase()
+	return initials
+}
+const playAnimation = (curr_persona, curr_persona_name) => {
+	if (anims_direction == "l") {
+		curr_persona.anims.play(curr_persona_name + "-left-walk", true)
+	} else if (anims_direction == "r") {
+		curr_persona.anims.play(curr_persona_name + "-right-walk", true)
+	} else if (anims_direction == "u") {
+		curr_persona.anims.play(curr_persona_name + "-up-walk", true)
+	} else if (anims_direction == "d") {
+		curr_persona.anims.play(curr_persona_name + "-down-walk", true)
+	} else {
+		curr_persona.anims.stop()
+
+		// If we were moving, pick an idle frame to use
+		if (pre_anims_direction_dict[curr_persona_name] == "l")
+			curr_persona.setTexture(curr_persona_name, "left")
+		else if (pre_anims_direction_dict[curr_persona_name] == "r")
+			curr_persona.setTexture(curr_persona_name, "right")
+		else if (pre_anims_direction_dict[curr_persona_name] == "u")
+			curr_persona.setTexture(curr_persona_name, "up")
+		else if (pre_anims_direction_dict[curr_persona_name] == "d")
+			curr_persona.setTexture(curr_persona_name, "down")
+		// console.log("curr_persona", curr_persona)
+	}
 }

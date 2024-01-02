@@ -71,6 +71,7 @@ const Game = () => {
 			),
 			update: updateGenerator(
 				personas,
+				speech_bubbles,
 				movementsToExecute,
 				pronunciatios,
 				playerRef,

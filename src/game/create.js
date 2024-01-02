@@ -1,3 +1,10 @@
+import {
+	PRONUNCIATIO_X_OFFSET,
+	PRONUNCIATIO_Y_OFFSET,
+	SPEECH_BUBBLE_X_OFFSET,
+	SPEECH_BUBBLE_Y_OFFSET,
+} from "../constants"
+
 export const createGenerator = (
 	persona_init_pos,
 	personas,
@@ -191,21 +198,29 @@ const createSprites = (
 		// Here, we are creating the persona and its pronunciatio sprites.
 		personas[persona_name] = new_sprite
 
-		const speechOffset = 50
 		speech_bubbles[persona_name] = context.add
-			.image(new_sprite.body.x + speechOffset, new_sprite.body.y - 30, "speech_bubble")
+			.image(
+				new_sprite.body.x + SPEECH_BUBBLE_X_OFFSET,
+				new_sprite.body.y - SPEECH_BUBBLE_Y_OFFSET,
+				"speech_bubble",
+			)
 			.setDepth(3)
 		speech_bubbles[persona_name].displayWidth = 130
 		speech_bubbles[persona_name].displayHeight = 58
 
 		pronunciatios[persona_name] = context.add
-			.text(new_sprite.body.x + speechOffset - 6, new_sprite.body.y - 42, "🦁", {
-				font: "24px monospace",
-				fill: "#000000",
-				padding: { x: 8, y: 8 },
-				border: "solid",
-				borderRadius: "10px",
-			})
+			.text(
+				new_sprite.body.x + PRONUNCIATIO_X_OFFSET,
+				new_sprite.body.y + PRONUNCIATIO_Y_OFFSET,
+				"🦁",
+				{
+					font: "24px monospace",
+					fill: "#000000",
+					padding: { x: 8, y: 8 },
+					border: "solid",
+					borderRadius: "10px",
+				},
+			)
 			.setDepth(3)
 	}
 }

@@ -12,6 +12,7 @@ let step_size = sec_per_step * 1000 // 10 seconds = 10000
 
 export const updateGenerator = (
 	personas,
+	speech_bubbles,
 	movements,
 	pronunciatios,
 	playerRef,
@@ -78,6 +79,7 @@ export const updateGenerator = (
 
 			const executeResult = performExecutePhase(
 				personas,
+				speech_bubbles,
 				pronunciatios,
 				currentMovements,
 				execute_count,

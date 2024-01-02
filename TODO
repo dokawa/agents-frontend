@@ -9,6 +9,8 @@ Refactor
     change frontend comments
 
 Features
+    do more than one movement
+    A* for paths
     focus
     persona impersonation
     add FE control buttons
