@@ -1,17 +1,15 @@
-where hitboxes
+Questions
+    where hitboxes
 
-add menu
+Bugs
+    deal with step in loop
+    align speech sprites
 
-align speech sprites
-refactor game function
+Refactor
+    change frontend comments
 
-fix prettier breakline
-
-focus
-persona impersonation
-persona movement
-    persona animation
-
-add FE control buttons
-
-add date
+Features
+    focus
+    persona impersonation
+    add FE control buttons
+    add date

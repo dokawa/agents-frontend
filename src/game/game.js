@@ -3,18 +3,23 @@ import React, { useEffect, useRef } from "react"
 import Phaser from "phaser"
 import { preloadGenerator } from "./preload"
 import { createGenerator } from "./create"
-import { updateGenerator } from "./update"
-import { WIDTH, HEIGHT, SEC_PER_STEP } from "./constants"
+import { updateGenerator } from "./update/update"
+import { WIDTH, HEIGHT, SEC_PER_STEP } from "../constants"
 
-function Game() {
+const Game = () => {
 	const gameContainerRef = useRef(null)
+
+	// Variables for storing movements that are sent from the backend server.
 
 	// TODO delete this stubs from BE
 	const persona_init_pos = { Abigail_Chen: [10, 10] }
-	const all_movement = {
+	const movementsToExecute = {
 		1: {
-			Abigail_Chen: {
-				movement: [10, 10],
+			persona: {
+				Abigail_Chen: {
+					movement: [15, 15],
+					pronunciatio: "☭",
+				},
 			},
 		},
 		// 2: {
@@ -33,8 +38,6 @@ function Game() {
 	// TODO add controls
 
 	const datetime = "01012024"
-
-	// Variables for storing movements that are sent from the backend server.
 
 	let start_datetime = new Date(Date.parse(datetime))
 
@@ -68,8 +71,7 @@ function Game() {
 			),
 			update: updateGenerator(
 				personas,
-				all_movement,
-				speech_bubbles,
+				movementsToExecute,
 				pronunciatios,
 				playerRef,
 				mapRef,
