@@ -12,21 +12,20 @@ const Game = () => {
 	// Variables for storing movements that are sent from the backend server.
 
 	// TODO delete this stubs from BE
-	const persona_init_pos = { Abigail_Chen: [10, 10] }
+	const persona_init_pos = { abigail_chen: [10, 10] }
 	const movementsToExecute = {
 		1: {
-			persona: {
-				Abigail_Chen: {
-					movement: [15, 15],
-					pronunciatio: "☭",
-				},
+			abigail_chen: {
+				movement: [15, 15],
+				pronunciatio: "☭",
 			},
 		},
-		// 2: {
-		// 	Abigail_Chen: {
-		// 		movement: [50, 50],
-		// 	},
-		// },
+		2: {
+			abigail_chen: {
+				movement: [20, 20],
+				pronunciatio: "🐺",
+			},
+		},
 	}
 
 	var pronunciatios = {}

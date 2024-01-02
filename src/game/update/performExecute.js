@@ -28,7 +28,7 @@ export const performExecutePhase = (
 		let curr_speech_bubble = speech_bubbles[Object.keys(personas)[i]]
 		let curr_pronunciatio = pronunciatios[Object.keys(personas)[i]]
 
-		const personaAction = execute_movement["persona"][curr_persona_name]
+		const personaAction = execute_movement[curr_persona_name]
 
 		if (execute_count == execute_count_max) {
 			let curr_x = personaAction["movement"][0]
@@ -87,18 +87,18 @@ export const performExecutePhase = (
 	// Filling in the action description.
 	if (execute_count == execute_count_max) {
 		for (let i = 0; i < Object.keys(personas).length; i++) {
-			let action_description = ""
+			// let action_description = ""
 			let curr_persona_name = Object.keys(personas)[i]
-			let curr_persona_name_os = curr_persona_name.replace(/ /g, "_")
-			let description_content = execute_movement["persona"][curr_persona_name]["description"]
+			// let curr_persona_name_os = curr_persona_name.replace(/ /g, "_")
+			// let description_content = execute_movement["persona"][curr_persona_name]["description"]
 			let chat_content = ""
 
-			if (execute_movement["persona"][curr_persona_name]["chat"] != null) {
-				for (let j = 0; j < execute_movement["persona"][curr_persona_name]["chat"].length; j++) {
+			if (execute_movement[curr_persona_name]["chat"] != null) {
+				for (let j = 0; j < execute_movement[curr_persona_name]["chat"].length; j++) {
 					chat_content +=
-						execute_movement["persona"][curr_persona_name]["chat"][j][0] +
+						execute_movement[curr_persona_name]["chat"][j][0] +
 						": " +
-						execute_movement["persona"][curr_persona_name]["chat"][j][1] +
+						execute_movement[curr_persona_name]["chat"][j][1] +
 						"<br>"
 				}
 			} else {

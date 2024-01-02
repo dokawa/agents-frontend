@@ -82,6 +82,7 @@ const createMap = (map) => {
 		interiors_pt5,
 		walls,
 	]
+	/* eslint-disable */
 	const bottomGroundLayer = map.createLayer("Bottom Ground", tileset_group_1, 0, 0)
 	const exteriorGroundLayer = map.createLayer("Exterior Ground", tileset_group_1, 0, 0)
 	const exteriorDecorationL1Layer = map.createLayer("Exterior Decoration L1", tileset_group_1, 0, 0)
@@ -90,6 +91,8 @@ const createMap = (map) => {
 	const wallLayer = map.createLayer("Wall", [CuteRPG_Field_C, walls], 0, 0)
 	const interiorFurnitureL1Layer = map.createLayer("Interior Furniture L1", tileset_group_1, 0, 0)
 	const interiorFurnitureL2Layer = map.createLayer("Interior Furniture L2 ", tileset_group_1, 0, 0)
+	/* eslint-enable */
+
 	const foregroundL1Layer = map.createLayer("Foreground L1", tileset_group_1, 0, 0)
 	const foregroundL2Layer = map.createLayer("Foreground L2", tileset_group_1, 0, 0)
 
@@ -227,10 +230,10 @@ const createSprites = (
 function setupDebugging(context) {
 	const inputKeyboard = context.input.keyboard
 
-	inputKeyboard.once("keydown-H", (event) => {
+	inputKeyboard.once("keydown-H", () => {
 		context.physics.world.createDebugGraphic()
 
-		const graphics = context.add.graphics().setAlpha(0.75).setDepth(20)
+		context.add.graphics().setAlpha(0.75).setDepth(20)
 		// worldLayer.renderDebug(graphics, {
 		// 	tileColor: null,
 		// 	collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255),

@@ -1,3 +1,5 @@
+import { ID_TO_SPRITE_NAME } from "../constants"
+
 export const preloadGenerator = (personas) =>
 	function preload() {
 		this.load.image("blocks_1", "assets/the_ville/visuals/map_assets/blocks/blocks_1.png")
@@ -49,7 +51,8 @@ export const preloadGenerator = (personas) =>
 		this.load.image("speech_bubble", "assets/speech_bubble/v3.png")
 
 		for (let p in personas) {
-			var imageStatic = "assets/characters/" + p.replace(/ /g, "_") + ".png"
+			const spriteName = ID_TO_SPRITE_NAME[p]
+			var imageStatic = "assets/characters/" + spriteName + ".png"
 
 			this.load.atlas(p.replace(/ /g, "_"), imageStatic, "assets/characters/atlas.json")
 		}
