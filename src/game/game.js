@@ -1,84 +1,49 @@
-/* eslint-disable camelcase */
 import React, { useEffect, useRef } from "react"
 import Phaser from "phaser"
-import { preloadGenerator } from "./preload"
-import { createGenerator } from "./create"
-import { updateGenerator } from "./update/update"
-import { WIDTH, HEIGHT, SEC_PER_STEP } from "../constants"
+import { STEP, TILE_WIDTH, PLAY_SPEED } from "../constants"
+import { getConfig } from "../config/config"
+import { persona_init_pos } from "../config/config"
+import { MainPage } from "./MainPage"
 
-const Game = () => {
-	const gameContainerRef = useRef(null)
+export const Game = () => {
+	const executeCountMax = TILE_WIDTH / PLAY_SPEED
 
-	// Variables for storing movements that are sent from the backend server.
-
-	// TODO delete this stubs from BE
-	const persona_init_pos = { abigail_chen: [10, 10] }
-	const movementsToExecute = {
-		1: {
-			abigail_chen: {
-				movement: [15, 15],
-				pronunciatio: "☭",
-			},
-		},
-		2: {
-			abigail_chen: {
-				movement: [20, 20],
-				pronunciatio: "🐺",
-			},
-		},
-	}
-
-	var pronunciatios = {}
-	var speech_bubbles = {}
+	const executeCount = {}
 
 	const mapRef = useRef()
 	const playerRef = useRef()
+	const stepRef = useRef(STEP)
 
-	// TODO add controls
-
-	const datetime = "01012024"
-
-	let start_datetime = new Date(Date.parse(datetime))
-
-	// // Control button binders
-	// var play_button=document.getElementById("play_button");
-	// var pause_button=document.getElementById("pause_button");
-
-	let personas = persona_init_pos
-
-	const config = {
-		type: Phaser.AUTO,
-		width: WIDTH,
-		height: HEIGHT,
-		parent: "game-container",
-		pixelArt: true,
-		physics: {
-			default: "arcade",
-			arcade: {
-				gravity: { y: 0 },
-			},
-		},
-		scene: {
-			preload: preloadGenerator(personas),
-			create: createGenerator(
-				personas,
-				persona_init_pos,
-				speech_bubbles,
-				pronunciatios,
-				mapRef,
-				playerRef,
-			),
-			update: updateGenerator(
-				personas,
-				speech_bubbles,
-				movementsToExecute,
-				pronunciatios,
-				playerRef,
-				mapRef,
-				start_datetime,
-			),
-		},
+	const decrementExecuteCount = () => {
+		for (let personaName in persona_init_pos) {
+			executeCount[personaName] -= 1
+		}
 	}
+
+	const resetExecuteCount = () => {
+		for (let personaName in persona_init_pos) {
+			executeCount[personaName] = executeCountMax
+		}
+	}
+
+	resetExecuteCount()
+
+	const finishExecuteCount = (personaName) => {
+		executeCount[personaName] = executeCountMax + 1
+	}
+
+	// let executeCount = executeCountMax
+
+	const config = getConfig(
+		playerRef,
+		mapRef,
+		executeCount,
+		executeCountMax,
+		stepRef,
+		decrementExecuteCount,
+		finishExecuteCount,
+		resetExecuteCount,
+	)
 
 	useEffect(() => {
 		const game = new Phaser.Game(config)
@@ -89,7 +54,7 @@ const Game = () => {
 		}
 	}, [])
 
-	return <div ref={gameContainerRef} />
+	return <MainPage />
 }
 
 export default Game

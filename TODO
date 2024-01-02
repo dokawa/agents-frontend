@@ -1,16 +1,24 @@
+Check
+
+
 Questions
-    where hitboxes
+    where are map hitboxes
 
 Bugs
-    deal with step in loop
+    fix teleporting movement
+    why is it not executing second movement
 
 Refactor
     change frontend comments
 
 Features
-    do more than one movement
+    get movement from BE
+
+==============================
+
+Backlog
     A* for paths
     focus
     persona impersonation
-    add FE control buttons
+        add FE impersonation menu
     add date

@@ -1,8 +1,9 @@
 export const PLAY_SPEED = 1
 export const STEP = 1
 export const SEC_PER_STEP = 10
-export const WIDTH = 1920
-export const HEIGHT = 1080
+export const WIDTH = 720
+export const HEIGHT = 480
+export const TILE_WIDTH = 32
 
 // Speech bubble
 export const SPEECH_BUBBLE_X_OFFSET = 80
@@ -12,4 +13,5 @@ export const PRONUNCIATIO_Y_OFFSET = -70
 
 export const ID_TO_SPRITE_NAME = {
 	abigail_chen: "Abigail_Chen",
+	mei_lin: "Mei_Lin",
 }

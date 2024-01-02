@@ -1,7 +1,7 @@
-import { WIDTH, HEIGHT, STEP, SEC_PER_STEP, PLAY_SPEED } from "../../constants"
+import { useEffect } from "react"
+import { STEP, SEC_PER_STEP, PLAY_SPEED } from "../../constants"
 import { performExecutePhase } from "./performExecute"
-
-const movement_speed = PLAY_SPEED
+import { moveCamera } from "./moveCamera"
 
 let sec_per_step = SEC_PER_STEP
 
@@ -17,19 +17,22 @@ export const updateGenerator = (
 	pronunciatios,
 	playerRef,
 	mapRef,
+	stepRef,
 	start_datetime,
+	phase,
+	executeCount,
+	executeCountMax,
+	decrementExecuteCount,
+	finishExecuteCount,
+	resetExecuteCount,
 ) =>
 	function update(time, delta) {
-		let step = STEP
-		let phase = "execute"
-
+		const step = stepRef.current
 		const currentMovements = movements[step]
 
 		const { height: canvasHeight, width: canvasWidth, tileWidth } = mapRef.current
-		const execute_count_max = tileWidth / movement_speed
 
-		let execute_count = execute_count_max
-		// console.log("execute_count", execute_count)
+		// console.log("executeCount", executeCount)
 		const player = playerRef.current
 		const inputKeyboard = this.input.keyboard
 
@@ -59,7 +62,7 @@ export const updateGenerator = (
 		// Only one of the three phases is incurred in each update cycle.
 		if (phase == "process") {
 			phase = performProcessPhase(step, sim_code, personas, curr_maze, tileWidth, phase)
-
+			// console.log("process")
 			// TODO fix update logic
 		} else if (phase == "update") {
 			// Update is where we * wait * for the backend server to finish
@@ -69,11 +72,12 @@ export const updateGenerator = (
 			const updateResult = performUpdatePhase(step, currentMovements, phase, sim_code)
 			// currentMovements = updateResult.currentMovements
 			phase = updateResult.phase
+			// console.log("update")
 		} else {
 			// This is where we actually move the personas in the visual world. Each
 			// backend computation in currentMovements moves each persona by one tile
 			// (or some personas might not move if they choose not to).
-			// The execute_count_max is computed by tileWidth/movement_speed, which
+			// The executeCountMax is computed by tileWidth/movement_speed, which
 			// defines a one step sequence in this world.
 			// document.getElementById("game-time-content").innerHTML = currentMovements["meta"]["curr_time"]
 
@@ -82,74 +86,34 @@ export const updateGenerator = (
 				speech_bubbles,
 				pronunciatios,
 				currentMovements,
-				execute_count,
-				execute_count_max,
+				executeCount,
+				executeCountMax,
 				tileWidth,
 				phase,
-				step,
+				decrementExecuteCount,
+				finishExecuteCount,
+				resetExecuteCount,
+				stepRef,
 			)
-			execute_count = executeResult.execute_count
+
 			phase = executeResult.phase
-			step = executeResult.step
 		}
 	}
 
 const setupPlayAndPauseButtons = (play_context) => {
-	// function game_resume() {
-	// 	play_context.scene.resume();
-	// }
-	// play_button.onclick = function(){
-	// 	game_resume();
-	// };
-	// function game_pause() {
-	// 	play_context.scene.pause();
-	// }
-	// pause_button.onclick = function(){
-	// 	game_pause();
-	// };
-}
+	var play_button = document.getElementById("play_button")
+	var pause_button = document.getElementById("pause_button")
 
-const moveCamera = (player, inputKeyboard, canvasWidth, canvasHeight, tileWidth) => {
-	// *** MOVE CAMERA ***
-	// This is where we finish up the camera setting we started in the create()
-	// function. We set the movement speed of the camera and wire up the keys to
-	// map to the actual movement.
-	const camera_speed = 800
-
-	const cursors = inputKeyboard.createCursorKeys()
-
-	// Stop any previous movement from the last frame
-	player.body.setVelocity(0)
-
-	const tileBoundaryXOffset = WIDTH / 2
-	const tileBoundaryYOffset = HEIGHT / 2
-
-	// TODO add if player is camera because we are restricting movement below
-
-	const tileHeight = tileWidth
-	if (
-		(cursors.left.isDown || inputKeyboard.addKey("A").isDown) &&
-		player.body.x > tileBoundaryXOffset
-	) {
-		player.body.setVelocityX(-camera_speed)
+	if (play_button) {
+		play_button.onclick = () => {
+			play_context.scene.resume()
+		}
 	}
-	if (
-		(cursors.up.isDown || inputKeyboard.addKey("W").isDown) &&
-		player.body.y > tileBoundaryYOffset
-	) {
-		player.body.setVelocityY(-camera_speed)
-	}
-	if (
-		(cursors.right.isDown || inputKeyboard.addKey("D").isDown) &&
-		player.body.x < canvasWidth * tileWidth - tileBoundaryXOffset
-	) {
-		player.body.setVelocityX(camera_speed)
-	}
-	if (
-		(cursors.down.isDown || inputKeyboard.addKey("S").isDown) &&
-		player.body.y < canvasHeight * tileHeight - tileBoundaryYOffset
-	) {
-		player.body.setVelocityY(camera_speed)
+
+	if (pause_button) {
+		pause_button.onclick = () => {
+			play_context.scene.pause()
+		}
 	}
 }
 
@@ -178,7 +142,11 @@ function performUpdatePhase(step, currentMovements, phase, sim_code) {
 	// 	update_xobj.send(JSON.stringify({ step: step, sim_code: sim_code }))
 	// }
 	// timer = timer - 1
+
 	// return { currentMovements, phase }
+
+	phase = "execute"
+	return { phase }
 }
 
 const performProcessPhase = (step, sim_code, personas, curr_maze, tileWidth, phase) => {

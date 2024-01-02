@@ -186,10 +186,10 @@ const createSprites = (
 
 	for (var persona_name in spawn_tile_loc) {
 		let start_pos = [
-			spawn_tile_loc[persona_name][0] * tileWidth + tileWidth / 2,
-			spawn_tile_loc[persona_name][1] * tileWidth + tileWidth,
+			spawn_tile_loc[persona_name][0] * tileWidth,
+			spawn_tile_loc[persona_name][1] * tileWidth,
 		]
-		console.log("pos", persona_name, spawn_tile_loc, start_pos, tileWidth)
+		// console.log("pos", persona_name, spawn_tile_loc, start_pos, tileWidth)
 		let new_sprite = context.physics.add
 			.sprite(start_pos[0], start_pos[1], persona_name, "down")
 			.setSize(30, 40)
@@ -204,7 +204,7 @@ const createSprites = (
 		speech_bubbles[persona_name] = context.add
 			.image(
 				new_sprite.body.x + SPEECH_BUBBLE_X_OFFSET,
-				new_sprite.body.y - SPEECH_BUBBLE_Y_OFFSET,
+				new_sprite.body.y + SPEECH_BUBBLE_Y_OFFSET,
 				"speech_bubble",
 			)
 			.setDepth(3)
