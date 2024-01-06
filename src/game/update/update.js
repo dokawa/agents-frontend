@@ -2,6 +2,8 @@ import { useEffect } from "react"
 import { STEP, SEC_PER_STEP, PLAY_SPEED } from "../../constants"
 import { performExecutePhase } from "./performExecute"
 import { moveCamera } from "./moveCamera"
+import { useSimulations } from "../../hooks/useSimulations"
+import SimulationsApi from "../../api/SimulationsApi"
 
 let sec_per_step = SEC_PER_STEP
 
@@ -9,11 +11,35 @@ let sec_per_step = SEC_PER_STEP
 // a step. We use this to link the steps in the backend.
 // let sim_code = "{{sim_code}}";
 let step_size = sec_per_step * 1000 // 10 seconds = 10000
+let requested
+let movements
+
+// const movements = {
+// 	1: {
+// 		abigail_chen: {
+// 			movement: [82, 15],
+// 			pronunciatio: "🦊",
+// 		},
+// 		mei_lin: {
+// 			movement: [79, 20],
+// 			pronunciatio: "🦊",
+// 		},
+// 	},
+// 	2: {
+// 		abigail_chen: {
+// 			movement: [83, 15],
+// 			pronunciatio: "🐺",
+// 		},
+// 		mei_lin: {
+// 			movement: [80, 20],
+// 			pronunciatio: "🐺",
+// 		},
+// 	},
+// }
 
 export const updateGenerator = (
 	personas,
 	speech_bubbles,
-	movements,
 	pronunciatios,
 	playerRef,
 	mapRef,
@@ -26,9 +52,20 @@ export const updateGenerator = (
 	finishExecuteCount,
 	resetExecuteCount,
 ) =>
-	function update(time, delta) {
+	async function update(time, delta) {
 		const step = stepRef.current
-		const currentMovements = movements[step]
+
+		// .then((response) => {
+		// 	// Store the result in the movements variable
+		// 	movements = response.data
+
+		// 	// You can now use the movements variable as needed
+		// 	console.log("Movements:", movements)
+		// })
+		// .catch((error) => {
+		// 	// Handle errors
+		// 	console.error(error)
+		// })
 
 		const { height: canvasHeight, width: canvasWidth, tileWidth } = mapRef.current
 
@@ -69,8 +106,8 @@ export const updateGenerator = (
 			// computing about what the personas will do next given their current
 			// situation.
 
-			const updateResult = performUpdatePhase(step, currentMovements, phase, sim_code)
-			// currentMovements = updateResult.currentMovements
+			const updateResult = performUpdatePhase(step, phase, sim_code)
+			movements = updateResult.movements
 			phase = updateResult.phase
 			// console.log("update")
 		} else {
@@ -80,6 +117,11 @@ export const updateGenerator = (
 			// The executeCountMax is computed by tileWidth/movement_speed, which
 			// defines a one step sequence in this world.
 			// document.getElementById("game-time-content").innerHTML = currentMovements["meta"]["curr_time"]
+			if (!movements) {
+				return
+			}
+
+			const currentMovements = movements[step]
 
 			const executeResult = performExecutePhase(
 				personas,
@@ -117,7 +159,7 @@ const setupPlayAndPauseButtons = (play_context) => {
 	}
 }
 
-function performUpdatePhase(step, currentMovements, phase, sim_code) {
+async function performUpdatePhase(step, phase, sim_code) {
 	// We do this by continuously asking the backend server if it is ready.
 	// The backend server is ready when it returns a json that has a key-val
 	// pair with "<move>": true.
@@ -145,8 +187,14 @@ function performUpdatePhase(step, currentMovements, phase, sim_code) {
 
 	// return { currentMovements, phase }
 
-	phase = "execute"
-	return { phase }
+	if (!requested) {
+		requested = true
+		movements = await SimulationsApi.move()
+
+		requested = false
+		phase = "execute"
+		return { movements, phase }
+	}
 }
 
 const performProcessPhase = (step, sim_code, personas, curr_maze, tileWidth, phase) => {

@@ -87,7 +87,7 @@ const fillSpeech = (curr_persona_name, curr_step_movement, pronunciatios, tileWi
 	let initials = [...curr_persona_name.matchAll(rgx)] || []
 	initials = ((initials.shift()?.[1] || "") + (initials.pop()?.[1] || "")).toUpperCase()
 	pronunciatios[curr_persona_name].setText(initials + ": " + pronunciatio_content)
-	console.log("initials", initials)
+	// console.log("initials", initials)
 
 	// Updating the status of each personas
 	document.getElementById("quick_emoji-" + curr_persona_name).innerHTML = pronunciatio_content

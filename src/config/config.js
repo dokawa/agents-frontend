@@ -6,32 +6,10 @@ import { WIDTH, HEIGHT } from "../constants"
 // Variables for storing movements that are sent from the backend server.
 // TODO delete this stubs from BE
 export const persona_init_pos = {
-	abigail_chen: [82, 14],
-	mei_lin: [79, 19],
+	abigailChen: [0, 0],
+	meiLin: [79, 19],
 }
 let personas = persona_init_pos
-const movementsToExecute = {
-	1: {
-		abigail_chen: {
-			movement: [82, 15],
-			pronunciatio: "🦊",
-		},
-		mei_lin: {
-			movement: [79, 20],
-			pronunciatio: "🦊",
-		},
-	},
-	2: {
-		abigail_chen: {
-			movement: [83, 15],
-			pronunciatio: "🐺",
-		},
-		mei_lin: {
-			movement: [80, 20],
-			pronunciatio: "🐺",
-		},
-	},
-}
 
 const datetime = "01012024"
 
@@ -76,7 +54,6 @@ export const getConfig = (
 		update: updateGenerator(
 			personas,
 			speech_bubbles,
-			movementsToExecute,
 			pronunciatios,
 			playerRef,
 			mapRef,

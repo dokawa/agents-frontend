@@ -36,8 +36,7 @@ export const performExecutePhase = (
 	const isFirstIteration = (personaName) => {
 		return executeCount[personaName] == executeCountMax
 	}
-
-	console.log("executeCount", executeCount, stepRef.current)
+	// console.log("executeCount", executeCount, stepRef.current)
 
 	for (let i = 0; i < Object.keys(personas).length; i++) {
 		let curr_persona_name = Object.keys(personas)[i]
@@ -45,15 +44,13 @@ export const performExecutePhase = (
 		let curr_speech_bubble = speech_bubbles[Object.keys(personas)[i]]
 		let curr_pronunciatio = pronunciatios[Object.keys(personas)[i]]
 
-		if (!execute_movement) {
+		if (!execute_movement || !execute_movement[curr_persona_name]) {
 			finishExecuteCount(curr_persona_name)
 		} else if (isFirstIteration(curr_persona_name)) {
 			const personaAction = execute_movement[curr_persona_name]
 
-			console.log("current", personaAction)
-
-			let curr_x = personaAction["movement"][0]
-			let curr_y = personaAction["movement"][1]
+			let curr_x = personaAction[0]
+			let curr_y = personaAction[1]
 			movement_target[curr_persona_name] = [curr_x * tileWidth, curr_y * tileWidth]
 			let pronunciatio_content = personaAction["pronunciatio"]
 
@@ -73,12 +70,19 @@ export const performExecutePhase = (
 			// Once we are done moving the personas, we move on to the "process"
 			// stage where we will send the current locations of all personas at the
 			// end of the movemments to the frontend server, and then the backend.
-			// for (let i = 0; i < Object.keys(personas).length; i++) {
-			// 	let curr_persona_name = Object.keys(personas)[i]
-			// 	let curr_persona = personas[curr_persona_name]
-			// 	curr_persona.body.x = movement_target[curr_persona_name][0]
-			// 	curr_persona.body.y = movement_target[curr_persona_name][1]
-			// }
+
+			let curr_persona_name = Object.keys(personas)[i]
+			let curr_persona = personas[curr_persona_name]
+			// console.log("target", curr_persona_name, movement_target[curr_persona_name][0])
+			// console.log(
+			// 	"movement_target",
+			// 	curr_persona_name,
+			// 	movement_target,
+			// 	movement_target[curr_persona_name],
+			// )
+			movement_target[curr_persona_name][0]
+			curr_persona.x = movement_target[curr_persona_name][0]
+			curr_persona.y = movement_target[curr_persona_name][1]
 
 			finishExecuteCount(curr_persona_name)
 
@@ -86,6 +90,17 @@ export const performExecutePhase = (
 				phase = "process"
 			}
 			// console.log("finished")
+		}
+
+		if (curr_persona_name == "abigailChen") {
+			console.log(
+				"personaMovement",
+				curr_persona_name,
+				movement_target[curr_persona_name],
+				[curr_persona.body.x, curr_persona.body.y],
+				[curr_persona.x, curr_persona.y],
+				executeCount[curr_persona_name],
+			)
 		}
 	}
 
@@ -120,7 +135,7 @@ export const performExecutePhase = (
 
 	if (allFinished()) {
 		stepRef.current = stepRef.current + 1
-		console.log("allfinished", executeCountMax)
+		// console.log("allfinished", executeCountMax)
 		resetExecuteCount()
 	} else {
 		decrementExecuteCount()
@@ -132,10 +147,23 @@ const getInitials = (curr_persona_name) => {
 	// This is what gives the pronunciatio balloon the name initials. We
 	// use regex to extract the initials of the personas.
 	// E.g., "Dolores Murphy" -> "DM"
+	return getInitialsFromCamelCase(curr_persona_name)
+}
+
+const getInitialsFromSnakeCase = (curr_persona_name) => {
 	let rgx = new RegExp(/(\p{L}{1})\p{L}+/, "gu")
 	let initials = [...curr_persona_name.matchAll(rgx)] || []
 	initials = ((initials.shift()?.[1] || "") + (initials.pop()?.[1] || "")).toUpperCase()
 	return initials
+}
+
+const getInitialsFromCamelCase = (curr_persona_name) => {
+	const words = curr_persona_name.match(/[A-Z]*[^A-Z]*/g)
+
+	// Extract the first letter from each word and concatenate them
+	const initials = words.map((word) => word.charAt(0)).join("")
+
+	return initials.toUpperCase()
 }
 
 const updateDirection = (curr_persona, curr_persona_name, direction) => {
@@ -144,24 +172,23 @@ const updateDirection = (curr_persona, curr_persona_name, direction) => {
 }
 
 const playAnimation = (curr_persona, curr_persona_name, movement_target) => {
-	// console.log("movement_target", movement_target)
 	const personaMovement = movement_target[curr_persona_name]
-	console.log("personaMovement", personaMovement)
+
 	if (!personaMovement) {
 		return
 	}
 
 	if (curr_persona.body.x < personaMovement[0]) {
-		curr_persona.body.x += movement_speed
+		curr_persona.x += movement_speed
 		updateDirection(curr_persona, curr_persona_name, "right")
 	} else if (curr_persona.body.x > personaMovement[0]) {
-		curr_persona.body.x -= movement_speed
+		curr_persona.x -= movement_speed
 		updateDirection(curr_persona, curr_persona_name, "left")
 	} else if (curr_persona.body.y < personaMovement[1]) {
-		curr_persona.body.y += movement_speed
+		curr_persona.y += movement_speed
 		updateDirection(curr_persona, curr_persona_name, "down")
 	} else if (curr_persona.body.y > personaMovement[1]) {
-		curr_persona.body.y -= movement_speed
+		curr_persona.y -= movement_speed
 		updateDirection(curr_persona, curr_persona_name, "up")
 	} else {
 		curr_persona.anims.stop()

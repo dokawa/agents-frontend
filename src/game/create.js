@@ -186,14 +186,15 @@ const createSprites = (
 
 	for (var persona_name in spawn_tile_loc) {
 		let start_pos = [
-			spawn_tile_loc[persona_name][0] * tileWidth,
-			spawn_tile_loc[persona_name][1] * tileWidth,
+			spawn_tile_loc[persona_name][0] * tileWidth + tileWidth / 2,
+			spawn_tile_loc[persona_name][1] * tileWidth + tileWidth / 2,
 		]
-		// console.log("pos", persona_name, spawn_tile_loc, start_pos, tileWidth)
+
 		let new_sprite = context.physics.add
 			.sprite(start_pos[0], start_pos[1], persona_name, "down")
 			.setSize(30, 40)
 			.setOffset(0, 0)
+
 		// Scale up the sprite
 		new_sprite.displayWidth = 40
 		new_sprite.scaleY = new_sprite.scaleX

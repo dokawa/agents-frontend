@@ -12,6 +12,6 @@ export const PRONUNCIATIO_X_OFFSET = 32
 export const PRONUNCIATIO_Y_OFFSET = -70
 
 export const ID_TO_SPRITE_NAME = {
-	abigail_chen: "Abigail_Chen",
-	mei_lin: "Mei_Lin",
+	abigailChen: "Abigail_Chen",
+	meiLin: "Mei_Lin",
 }

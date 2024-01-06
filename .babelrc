@@ -2,7 +2,6 @@
   "presets": [
   ],
   "plugins": [
-        "add-module-exports"
   ],
   "env": {
     "test": {

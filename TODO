@@ -5,13 +5,13 @@ Questions
     where are map hitboxes
 
 Bugs
-    fix teleporting movement
-    why is it not executing second movement
+
 
 Refactor
     change frontend comments
 
 Features
+    send movements to BE
     get movement from BE
 
 ==============================
