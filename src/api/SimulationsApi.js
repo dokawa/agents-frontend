@@ -1,7 +1,6 @@
 import axios, { apiBaseURL } from "./axios"
 
-// const simulationsApiBaseURL = `${apiBaseURL}/simulations`
-const simulationsApiBaseURL = "http://localhost:8000/simulations"
+const simulationsApiBaseURL = `${apiBaseURL}/simulations`
 
 export default class SimulationsApi {
 	static move() {

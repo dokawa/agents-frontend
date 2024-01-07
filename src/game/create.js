@@ -5,14 +5,7 @@ import {
 	SPEECH_BUBBLE_Y_OFFSET,
 } from "../constants"
 
-export const createGenerator = (
-	persona_init_pos,
-	personas,
-	speech_bubbles,
-	pronunciatios,
-	mapRef,
-	playerRef,
-) =>
+export const createGenerator = (personas, speech_bubbles, pronunciatios, mapRef, playerRef) =>
 	function create() {
 		const context = this
 
@@ -29,7 +22,7 @@ export const createGenerator = (
 		setupCamera(context, playerRef, map)
 
 		// *** SET UP PERSONAS ***
-		createSprites(context, persona_init_pos, tileWidth, personas, speech_bubbles, pronunciatios)
+		createSprites(context, tileWidth, personas, speech_bubbles, pronunciatios)
 		createWalkingAnimations(context, personas)
 	}
 
@@ -114,16 +107,16 @@ const createWalkingAnimations = (context, personas) => {
 	// Create the player's walking animations from the texture atlas. These are
 	// stored in the global animation manager so any sprite can access them.
 	const anims = context.anims
-	for (let i = 0; i < Object.keys(personas).length; i++) {
-		let persona_name = Object.keys(personas)[i]
-		let left_walk_name = persona_name + "-left-walk"
-		let right_walk_name = persona_name + "-right-walk"
-		let down_walk_name = persona_name + "-down-walk"
-		let up_walk_name = persona_name + "-up-walk"
+	personas.map((agent) => {
+		let agentKey = agent.key
+		let left_walk_name = agentKey + "-left-walk"
+		let right_walk_name = agentKey + "-right-walk"
+		let down_walk_name = agentKey + "-down-walk"
+		let up_walk_name = agentKey + "-up-walk"
 
 		anims.create({
 			key: left_walk_name,
-			frames: anims.generateFrameNames(persona_name, {
+			frames: anims.generateFrameNames(agentKey, {
 				prefix: "left-walk.",
 				start: 0,
 				end: 3,
@@ -135,7 +128,7 @@ const createWalkingAnimations = (context, personas) => {
 
 		anims.create({
 			key: right_walk_name,
-			frames: anims.generateFrameNames(persona_name, {
+			frames: anims.generateFrameNames(agentKey, {
 				prefix: "right-walk.",
 				start: 0,
 				end: 3,
@@ -147,7 +140,7 @@ const createWalkingAnimations = (context, personas) => {
 
 		anims.create({
 			key: down_walk_name,
-			frames: anims.generateFrameNames(persona_name, {
+			frames: anims.generateFrameNames(agentKey, {
 				prefix: "down-walk.",
 				start: 0,
 				end: 3,
@@ -159,7 +152,7 @@ const createWalkingAnimations = (context, personas) => {
 
 		anims.create({
 			key: up_walk_name,
-			frames: anims.generateFrameNames(persona_name, {
+			frames: anims.generateFrameNames(agentKey, {
 				prefix: "up-walk.",
 				start: 0,
 				end: 3,
@@ -168,65 +161,50 @@ const createWalkingAnimations = (context, personas) => {
 			frameRate: 4,
 			repeat: -1,
 		})
-	}
+	})
 }
 
-const createSprites = (
-	context,
-	persona_init_pos,
-	tileWidth,
-	personas,
-	speech_bubbles,
-	pronunciatios,
-) => {
-	const spawn_tile_loc = {}
-	for (var key in persona_init_pos) {
-		spawn_tile_loc[key] = personas[key]
-	}
+const createSprites = (context, tileWidth, personas, speech_bubbles, pronunciatios) => {
+	personas.map((agent) => {
+		const agentKey = agent.key
 
-	for (var persona_name in spawn_tile_loc) {
 		let start_pos = [
-			spawn_tile_loc[persona_name][0] * tileWidth + tileWidth / 2,
-			spawn_tile_loc[persona_name][1] * tileWidth + tileWidth / 2,
+			agent.currTile[0] * tileWidth + tileWidth / 2,
+			agent.currTile[1] * tileWidth + tileWidth / 2,
 		]
 
-		let new_sprite = context.physics.add
-			.sprite(start_pos[0], start_pos[1], persona_name, "down")
+		let character = context.physics.add
+			.sprite(start_pos[0], start_pos[1], agentKey, "down")
 			.setSize(30, 40)
 			.setOffset(0, 0)
 
 		// Scale up the sprite
-		new_sprite.displayWidth = 40
-		new_sprite.scaleY = new_sprite.scaleX
+		character.displayWidth = 40
+		character.scaleY = character.scaleX
 
 		// Here, we are creating the persona and its pronunciatio sprites.
-		personas[persona_name] = new_sprite
+		agent.character = character
 
-		speech_bubbles[persona_name] = context.add
+		speech_bubbles[agentKey] = context.add
 			.image(
-				new_sprite.body.x + SPEECH_BUBBLE_X_OFFSET,
-				new_sprite.body.y + SPEECH_BUBBLE_Y_OFFSET,
+				character.body.x + SPEECH_BUBBLE_X_OFFSET,
+				character.body.y + SPEECH_BUBBLE_Y_OFFSET,
 				"speech_bubble",
 			)
 			.setDepth(3)
-		speech_bubbles[persona_name].displayWidth = 130
-		speech_bubbles[persona_name].displayHeight = 58
+		speech_bubbles[agentKey].displayWidth = 130
+		speech_bubbles[agentKey].displayHeight = 58
 
-		pronunciatios[persona_name] = context.add
-			.text(
-				new_sprite.body.x + PRONUNCIATIO_X_OFFSET,
-				new_sprite.body.y + PRONUNCIATIO_Y_OFFSET,
-				"🦁",
-				{
-					font: "24px monospace",
-					fill: "#000000",
-					padding: { x: 8, y: 8 },
-					border: "solid",
-					borderRadius: "10px",
-				},
-			)
+		pronunciatios[agentKey] = context.add
+			.text(character.body.x + PRONUNCIATIO_X_OFFSET, character.body.y + PRONUNCIATIO_Y_OFFSET, "🦁", {
+				font: "24px monospace",
+				fill: "#000000",
+				padding: { x: 8, y: 8 },
+				border: "solid",
+				borderRadius: "10px",
+			})
 			.setDepth(3)
-	}
+	})
 }
 function setupDebugging(context) {
 	const inputKeyboard = context.input.keyboard

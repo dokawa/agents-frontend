@@ -99,17 +99,15 @@ export const updateGenerator = (
 		// Only one of the three phases is incurred in each update cycle.
 		if (phase == "process") {
 			phase = performProcessPhase(step, sim_code, personas, curr_maze, tileWidth, phase)
-			// console.log("process")
+			console.log("process")
 			// TODO fix update logic
 		} else if (phase == "update") {
 			// Update is where we * wait * for the backend server to finish
 			// computing about what the personas will do next given their current
 			// situation.
 
-			const updateResult = performUpdatePhase(step, phase, sim_code)
-			movements = updateResult.movements
-			phase = updateResult.phase
-			// console.log("update")
+			phase = performUpdatePhase(step, phase, sim_code)
+			console.log("update")
 		} else {
 			// This is where we actually move the personas in the visual world. Each
 			// backend computation in currentMovements moves each persona by one tile
@@ -117,6 +115,7 @@ export const updateGenerator = (
 			// The executeCountMax is computed by tileWidth/movement_speed, which
 			// defines a one step sequence in this world.
 			// document.getElementById("game-time-content").innerHTML = currentMovements["meta"]["curr_time"]
+			console.log("execute")
 			if (!movements) {
 				return
 			}
@@ -185,41 +184,38 @@ async function performUpdatePhase(step, phase, sim_code) {
 	// }
 	// timer = timer - 1
 
-	// return { currentMovements, phase }
+	phase = "execute"
+	return phase
+}
 
-	if (!requested) {
+const canMakeRequest = (step) => {
+	if (movements) {
+		return step > Object.keys(movements).length
+	}
+
+	return true
+}
+
+const performProcessPhase = async (step, sim_code, personas, curr_maze, tileWidth, phase) => {
+	// "process" takes all current locations of the personas and send them to
+	// the frontend server in a json form. Here, we first create the json
+	// file that records all persona locations:
+	// let data = { step: step, sim_code: sim_code, environment: {} }
+	// for (let i = 0; i < Object.keys(personas).length; i++) {
+	// 	let persona_name = Object.keys(personas)[i]
+	// 	data["environment"][persona_name] = {
+	// 		maze: curr_maze,
+	// 		x: Math.ceil(personas[persona_name].body.position.x / tileWidth),
+	// 		y: Math.ceil(personas[persona_name].body.position.y / tileWidth),
+	// 	}
+	// }
+	if (!requested && canMakeRequest(step)) {
 		requested = true
 		movements = await SimulationsApi.move()
 
 		requested = false
-		phase = "execute"
-		return { movements, phase }
 	}
-}
 
-const performProcessPhase = (step, sim_code, personas, curr_maze, tileWidth, phase) => {
-	// "process" takes all current locations of the personas and send them to
-	// the frontend server in a json form. Here, we first create the json
-	// file that records all persona locations:
-	let data = { step: step, sim_code: sim_code, environment: {} }
-	for (let i = 0; i < Object.keys(personas).length; i++) {
-		let persona_name = Object.keys(personas)[i]
-		data["environment"][persona_name] = {
-			maze: curr_maze,
-			x: Math.ceil(personas[persona_name].body.position.x / tileWidth),
-			y: Math.ceil(personas[persona_name].body.position.y / tileWidth),
-		}
-	}
-	var json = JSON.stringify(data)
-	// We then send this to the frontend server:
-	// TODO make request here
-	// var retrieve_xobj = new XMLHttpRequest()
-	// retrieve_xobj.overrideMimeType("application/json")
-	// retrieve_xobj.open("POST", "{% url 'process_environment' %}", true)
-	// retrieve_xobj.send(json)
-	// Finally, we update the phase variable to start the "udpate" process.
-	// Now that we sent all persona locations to the backend server, we need
-	// to wait until the backend determines what the personas will do next.
 	phase = "update"
 	return phase
 }

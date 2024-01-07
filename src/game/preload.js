@@ -1,4 +1,5 @@
 import { ID_TO_SPRITE_NAME } from "../constants"
+import humps from "humps"
 
 export const preloadGenerator = (personas) =>
 	function preload() {
@@ -50,10 +51,9 @@ export const preloadGenerator = (personas) =>
 
 		this.load.image("speech_bubble", "assets/speech_bubble/v3.png")
 
-		for (let p in personas) {
-			const spriteName = ID_TO_SPRITE_NAME[p]
-			var imageStatic = "assets/characters/" + spriteName + ".png"
+		personas.map((persona) => {
+			var imageStatic = "assets/characters/" + persona.spriteName + ".png"
 
-			this.load.atlas(p.replace(/ /g, "_"), imageStatic, "assets/characters/atlas.json")
-		}
+			this.load.atlas(humps.camelize(persona.name), imageStatic, "assets/characters/atlas.json")
+		})
 	}

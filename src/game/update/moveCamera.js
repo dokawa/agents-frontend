@@ -1,4 +1,4 @@
-import { WIDTH, HEIGHT } from "../../constants"
+import { WIDTH, HEIGHT, TILE_WIDTH } from "../../constants"
 export const moveCamera = (player, inputKeyboard, canvasWidth, canvasHeight, tileWidth) => {
 	// *** MOVE CAMERA ***
 	// This is where we finish up the camera setting we started in the create()

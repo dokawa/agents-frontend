@@ -2,7 +2,7 @@ Check
 
 
 Questions
-    where are map hitboxes
+
 
 Bugs
 
@@ -12,12 +12,13 @@ Refactor
 
 Features
     send movements to BE
-    get movement from BE
+
+    
 
 ==============================
 
 Backlog
-    A* for paths
+
     focus
     persona impersonation
         add FE impersonation menu

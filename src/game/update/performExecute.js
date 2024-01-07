@@ -4,7 +4,9 @@ import {
 	PRONUNCIATIO_Y_OFFSET,
 	SPEECH_BUBBLE_X_OFFSET,
 	SPEECH_BUBBLE_Y_OFFSET,
+	TILE_WIDTH,
 } from "../../constants"
+import humps from "humps"
 
 const movement_speed = PLAY_SPEED
 const movement_target = {}
@@ -25,66 +27,69 @@ export const performExecutePhase = (
 	stepRef,
 ) => {
 	const allFinished = () => {
-		for (let personaName in executeCount) {
-			if (executeCount[personaName] !== executeCountMax + 1) {
+		for (let agentKey in executeCount) {
+			if (executeCount[agentKey] !== executeCountMax + 1) {
 				return false
 			}
 		}
 		return true
 	}
 
-	const isFirstIteration = (personaName) => {
-		return executeCount[personaName] == executeCountMax
+	const isFirstIteration = (agentKey) => {
+		return executeCount[agentKey] == executeCountMax
 	}
+
+	const camelCaseToName = (inputString) => {
+		// Add a space before each uppercase letter that is not at the beginning
+		const spacedString = inputString.replace(/([a-z])([A-Z])/g, "$1 $2")
+
+		// Capitalize the first letter of each word
+		const nameFormat = spacedString.replace(/\b\w/g, (char) => char.toUpperCase())
+
+		return nameFormat
+	}
+
 	// console.log("executeCount", executeCount, stepRef.current)
 
-	for (let i = 0; i < Object.keys(personas).length; i++) {
-		let curr_persona_name = Object.keys(personas)[i]
-		let curr_persona = personas[curr_persona_name]
-		let curr_speech_bubble = speech_bubbles[Object.keys(personas)[i]]
-		let curr_pronunciatio = pronunciatios[Object.keys(personas)[i]]
+	personas.map((persona) => {
+		// name keys are camelized by axios interceptor
+		let agentKey = humps.camelize(persona.name)
+		let curr_persona = persona
+		let curr_speech_bubble = speech_bubbles[agentKey]
+		let curr_pronunciatio = pronunciatios[agentKey]
+		const character = persona.character
 
-		if (!execute_movement || !execute_movement[curr_persona_name]) {
-			finishExecuteCount(curr_persona_name)
-		} else if (isFirstIteration(curr_persona_name)) {
-			const personaAction = execute_movement[curr_persona_name]
+		if (!execute_movement || !execute_movement[agentKey]) {
+			finishExecuteCount(agentKey)
+		} else if (isFirstIteration(agentKey)) {
+			const personaAction = execute_movement[agentKey]
 
 			let curr_x = personaAction[0]
 			let curr_y = personaAction[1]
-			movement_target[curr_persona_name] = [curr_x * tileWidth, curr_y * tileWidth]
+			movement_target[agentKey] = [curr_x * tileWidth, curr_y * tileWidth]
 			let pronunciatio_content = personaAction["pronunciatio"]
 
-			let initials = getInitials(curr_persona_name)
-			pronunciatios[curr_persona_name].setText(initials + ": " + pronunciatio_content)
+			let initials = getInitials(agentKey)
+			pronunciatios[agentKey].setText(initials + ": " + pronunciatio_content)
 		}
 
 		// console.log(curr_persona_name)
-		if (executeCount[curr_persona_name] > 0) {
-			playAnimation(curr_persona, curr_persona_name, movement_target)
+		if (executeCount[agentKey] > 0) {
+			playAnimation(character, agentKey, movement_target)
 
-			curr_pronunciatio.x = curr_persona.body.x + PRONUNCIATIO_X_OFFSET
-			curr_pronunciatio.y = curr_persona.body.y + PRONUNCIATIO_Y_OFFSET
-			curr_speech_bubble.x = curr_persona.body.x + SPEECH_BUBBLE_X_OFFSET
-			curr_speech_bubble.y = curr_persona.body.y + SPEECH_BUBBLE_Y_OFFSET
+			curr_pronunciatio.x = character.x + PRONUNCIATIO_X_OFFSET
+			curr_pronunciatio.y = character.y + PRONUNCIATIO_Y_OFFSET
+			curr_speech_bubble.x = character.x + SPEECH_BUBBLE_X_OFFSET
+			curr_speech_bubble.y = character.y + SPEECH_BUBBLE_Y_OFFSET
 		} else {
 			// Once we are done moving the personas, we move on to the "process"
 			// stage where we will send the current locations of all personas at the
 			// end of the movemments to the frontend server, and then the backend.
 
-			let curr_persona_name = Object.keys(personas)[i]
-			let curr_persona = personas[curr_persona_name]
-			// console.log("target", curr_persona_name, movement_target[curr_persona_name][0])
-			// console.log(
-			// 	"movement_target",
-			// 	curr_persona_name,
-			// 	movement_target,
-			// 	movement_target[curr_persona_name],
-			// )
-			movement_target[curr_persona_name][0]
-			curr_persona.x = movement_target[curr_persona_name][0]
-			curr_persona.y = movement_target[curr_persona_name][1]
+			// curr_persona.x = movement_target[agentKey][0] + tileWidth / 2
+			// curr_persona.y = movement_target[agentKey][1] + tileWidth / 2
 
-			finishExecuteCount(curr_persona_name)
+			finishExecuteCount(agentKey)
 
 			if (allFinished()) {
 				phase = "process"
@@ -92,17 +97,17 @@ export const performExecutePhase = (
 			// console.log("finished")
 		}
 
-		if (curr_persona_name == "abigailChen") {
-			console.log(
-				"personaMovement",
-				curr_persona_name,
-				movement_target[curr_persona_name],
-				[curr_persona.body.x, curr_persona.body.y],
-				[curr_persona.x, curr_persona.y],
-				executeCount[curr_persona_name],
-			)
-		}
-	}
+		// if (curr_persona_name == "meiLin") {
+		// 	console.log(
+		// 		"personaMovement",
+		// 		curr_persona_name,
+		// 		movement_target[curr_persona_name],
+		// 		[curr_persona.body.x, curr_persona.body.y],
+		// 		[curr_persona.x, curr_persona.y],
+		// 		executeCount[curr_persona_name],
+		// 	)
+		// }
+	})
 
 	// Filling in the action description.
 	// if (executeCount == executeCountMax) {
@@ -133,9 +138,12 @@ export const performExecutePhase = (
 	// 	}
 	// }
 
+	console.log("step", stepRef.current)
+	console.log("executeCount", executeCount)
+
 	if (allFinished()) {
 		stepRef.current = stepRef.current + 1
-		// console.log("allfinished", executeCountMax)
+		console.log("allfinished", executeCountMax)
 		resetExecuteCount()
 	} else {
 		decrementExecuteCount()
@@ -171,32 +179,32 @@ const updateDirection = (curr_persona, curr_persona_name, direction) => {
 	curr_persona.anims.play(curr_persona_name + "-" + direction + "-walk", true)
 }
 
-const playAnimation = (curr_persona, curr_persona_name, movement_target) => {
-	const personaMovement = movement_target[curr_persona_name]
+const playAnimation = (character, agentKey, movement_target) => {
+	const personaMovement = movement_target[agentKey]
 
 	if (!personaMovement) {
 		return
 	}
 
-	if (curr_persona.body.x < personaMovement[0]) {
-		curr_persona.x += movement_speed
-		updateDirection(curr_persona, curr_persona_name, "right")
-	} else if (curr_persona.body.x > personaMovement[0]) {
-		curr_persona.x -= movement_speed
-		updateDirection(curr_persona, curr_persona_name, "left")
-	} else if (curr_persona.body.y < personaMovement[1]) {
-		curr_persona.y += movement_speed
-		updateDirection(curr_persona, curr_persona_name, "down")
-	} else if (curr_persona.body.y > personaMovement[1]) {
-		curr_persona.y -= movement_speed
-		updateDirection(curr_persona, curr_persona_name, "up")
+	if (character.x < personaMovement[0] + TILE_WIDTH / 2) {
+		character.x += movement_speed
+		updateDirection(character, agentKey, "right")
+	} else if (character.x > personaMovement[0] + TILE_WIDTH / 2) {
+		character.x -= movement_speed
+		updateDirection(character, agentKey, "left")
+	} else if (character.y < personaMovement[1] + TILE_WIDTH / 2) {
+		character.y += movement_speed
+		updateDirection(character, agentKey, "down")
+	} else if (character.y > personaMovement[1] + TILE_WIDTH / 2) {
+		character.y -= movement_speed
+		updateDirection(character, agentKey, "up")
 	} else {
-		curr_persona.anims.stop()
+		character.anims.stop()
 
-		const idleFrame = pre_anims_direction_dict[curr_persona_name]
+		const idleFrame = pre_anims_direction_dict[agentKey]
 
 		if (idleFrame) {
-			curr_persona.setTexture(curr_persona_name, idleFrame)
+			character.setTexture(agentKey, idleFrame)
 		}
 	}
 }
