@@ -1,3 +1,5 @@
+import { Position } from "./ui/Position"
+
 export const MainPage = () => {
 	return (
 		<div>
@@ -12,6 +14,7 @@ export const MainPage = () => {
 						</h2>
 					</div>
 					<div className='col-md-4'>
+						<Position x={2} y={3} />
 						<h2 style={{ textAlign: "right" }}>
 							<button id='play_button' type='button' className='btn btn-default'>
 								<strong style={{ fontSize: "1.2em" }}>

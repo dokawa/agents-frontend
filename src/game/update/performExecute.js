@@ -82,12 +82,12 @@ export const performExecutePhase = (
 			curr_speech_bubble.x = character.x + SPEECH_BUBBLE_X_OFFSET
 			curr_speech_bubble.y = character.y + SPEECH_BUBBLE_Y_OFFSET
 		} else {
-			// Once we are done moving the personas, we move on to the "process"
-			// stage where we will send the current locations of all personas at the
-			// end of the movemments to the frontend server, and then the backend.
+			// Once we are done moving the agents, we move on to the "process"
+			// stage where we will send the current locations of all agents at the
+			// end of the movemments to the backend server
 
-			// curr_persona.x = movement_target[agentKey][0] + tileWidth / 2
-			// curr_persona.y = movement_target[agentKey][1] + tileWidth / 2
+			character.x = movement_target[agentKey][0] + tileWidth / 2
+			character.y = movement_target[agentKey][1] + tileWidth / 2
 
 			finishExecuteCount(agentKey)
 

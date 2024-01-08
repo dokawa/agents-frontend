@@ -1,4 +1,5 @@
 import { WIDTH, HEIGHT, TILE_WIDTH } from "../../constants"
+
 export const moveCamera = (player, inputKeyboard, canvasWidth, canvasHeight, tileWidth) => {
 	// *** MOVE CAMERA ***
 	// This is where we finish up the camera setting we started in the create()
@@ -15,7 +16,6 @@ export const moveCamera = (player, inputKeyboard, canvasWidth, canvasHeight, til
 	const tileBoundaryYOffset = HEIGHT / 2
 
 	// TODO check if player is camera because we are restricting movement below
-
 	const tileHeight = tileWidth
 	if (
 		(cursors.left.isDown || inputKeyboard.addKey("A").isDown) &&
@@ -41,4 +41,11 @@ export const moveCamera = (player, inputKeyboard, canvasWidth, canvasHeight, til
 	) {
 		player.body.setVelocityY(camera_speed)
 	}
+
+	document.getElementById("position-x").innerHTML = Math.floor(
+		(player.body.x + TILE_WIDTH / 2) / TILE_WIDTH,
+	)
+	document.getElementById("position-y").innerHTML = Math.floor(
+		(player.body.y + TILE_WIDTH / 2) / TILE_WIDTH,
+	)
 }

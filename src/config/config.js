@@ -47,18 +47,14 @@ const decrementExecuteCount = () => {
 const resetExecuteCount = () => {
 	personas.map((persona) => {
 		executeCount[persona.key] = executeCountMax
-		console.log(persona)
 	})
 }
 
 resetExecuteCount()
-console.log("starting", executeCount)
 
 const finishExecuteCount = (agentKey) => {
 	executeCount[agentKey] = executeCountMax + 1
 }
-
-// let personas = persona_init_pos
 
 export const getConfig = (playerRef, mapRef, stepRef) => ({
 	type: Phaser.AUTO,
