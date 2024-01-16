@@ -190,8 +190,8 @@ const createSprites = (context, tileWidth, personas, speech_bubbles, pronunciati
 
 		speech_bubbles[agentKey] = context.add
 			.image(
-				character.body.x + SPEECH_BUBBLE_X_OFFSET,
-				character.body.y + SPEECH_BUBBLE_Y_OFFSET,
+				character.x + SPEECH_BUBBLE_X_OFFSET,
+				character.y + SPEECH_BUBBLE_Y_OFFSET,
 				"speech_bubble",
 			)
 			.setDepth(3)
@@ -199,7 +199,7 @@ const createSprites = (context, tileWidth, personas, speech_bubbles, pronunciati
 		speech_bubbles[agentKey].displayHeight = 58
 
 		pronunciatios[agentKey] = context.add
-			.text(character.body.x + PRONUNCIATIO_X_OFFSET, character.body.y + PRONUNCIATIO_Y_OFFSET, "🦁", {
+			.text(character.x + PRONUNCIATIO_X_OFFSET, character.y + PRONUNCIATIO_Y_OFFSET, "🦁", {
 				font: "24px monospace",
 				fill: "#000000",
 				padding: { x: 8, y: 8 },

@@ -53,7 +53,7 @@ export const performExecutePhase = (
 		return !currentMovements || !currentMovements[agentKey] || !currentMovements[agentKey]["movement"]
 	}
 
-	// console.log("executeCount", executeCount, stepRef.current)
+	console.log("currentMovements", currentMovements)
 
 	personas.map((persona) => {
 		// name keys are camelized by axios interceptor
@@ -97,6 +97,7 @@ export const performExecutePhase = (
 
 			if (allFinished()) {
 				phase = "process"
+				return phase
 			}
 			// console.log("finished")
 		}
@@ -113,34 +114,9 @@ export const performExecutePhase = (
 		// }
 	})
 
+	// TODO check
 	// Filling in the action description.
-	// if (executeCount == executeCountMax) {
-	// 	for (let i = 0; i < Object.keys(personas).length; i++) {
-	// 		// let action_description = ""
-	// 		let curr_persona_name = Object.keys(personas)[i]
-	// 		// let curr_persona_name_os = curr_persona_name.replace(/ /g, "_")
-	// 		// let description_content = currentMovements["persona"][curr_persona_name]["description"]
-	// 		let chat_content = ""
-
-	// 		if (currentMovements[curr_persona_name]["chat"] != null) {
-	// 			for (let j = 0; j < currentMovements[curr_persona_name]["chat"].length; j++) {
-	// 				chat_content +=
-	// 					currentMovements[curr_persona_name]["chat"][j][0] +
-	// 					": " +
-	// 					currentMovements[curr_persona_name]["chat"][j][1] +
-	// 					"<br>"
-	// 			}
-	// 		} else {
-	// 			chat_content = "<em>None at the moment</em>"
-	// 		}
-	// 		// action_description += description_content + "<br>";
-	// 		// document.getElementById("current_action__" + curr_persona_name_os).innerHTML =
-	// 		// 	description_content.split("@")[0]
-	// 		// document.getElementById("target_address__" + curr_persona_name_os).innerHTML =
-	// 		// 	description_content.split("@")[1]
-	// 		// document.getElementById("chat__" + curr_persona_name_os).innerHTML = chat_content
-	// 	}
-	// }
+	// fillDescription(executeCount, executeCountMax, personas, currentMovements)
 
 	console.log("step", stepRef.current)
 	console.log("executeCount", executeCount)
@@ -209,6 +185,35 @@ const playAnimation = (character, agentKey, movement_target) => {
 
 		if (idleFrame) {
 			character.setTexture(agentKey, idleFrame)
+		}
+	}
+}
+function fillDescription(executeCount, executeCountMax, personas, currentMovements) {
+	if (executeCount == executeCountMax) {
+		for (let i = 0; i < Object.keys(personas).length; i++) {
+			// let action_description = ""
+			let curr_persona_name = Object.keys(personas)[i]
+			// let curr_persona_name_os = curr_persona_name.replace(/ /g, "_")
+			// let description_content = currentMovements["persona"][curr_persona_name]["description"]
+			let chat_content = ""
+
+			if (currentMovements[curr_persona_name]["chat"] != null) {
+				for (let j = 0; j < currentMovements[curr_persona_name]["chat"].length; j++) {
+					chat_content +=
+						currentMovements[curr_persona_name]["chat"][j][0] +
+						": " +
+						currentMovements[curr_persona_name]["chat"][j][1] +
+						"<br>"
+				}
+			} else {
+				chat_content = "<em>None at the moment</em>"
+			}
+			// action_description += description_content + "<br>";
+			// document.getElementById("current_action__" + curr_persona_name_os).innerHTML =
+			// 	description_content.split("@")[0]
+			// document.getElementById("target_address__" + curr_persona_name_os).innerHTML =
+			// 	description_content.split("@")[1]
+			// document.getElementById("chat__" + curr_persona_name_os).innerHTML = chat_content
 		}
 	}
 }

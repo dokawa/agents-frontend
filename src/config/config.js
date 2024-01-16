@@ -4,6 +4,8 @@ import { updateGenerator } from "../game/update/update"
 import { WIDTH, HEIGHT, TILE_WIDTH, PLAY_SPEED } from "../constants"
 import AgentsApi from "../api/AgentsApi"
 import humps from "humps"
+import Phaser from "phaser"
+import SimulationsApi from "../api/SimulationsApi"
 
 const executeCountMax = TILE_WIDTH / PLAY_SPEED
 const datetime = "01012024"
@@ -39,6 +41,12 @@ const resetExecuteCount = () => {
 }
 
 resetExecuteCount()
+
+const resetSimulationCount = async () => {
+	await SimulationsApi.resetCount(simulationId)
+}
+
+resetSimulationCount()
 
 const finishExecuteCount = (agentKey) => {
 	executeCount[agentKey] = executeCountMax + 1

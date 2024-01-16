@@ -14,29 +14,6 @@ let step_size = sec_per_step * 1000 // 10 seconds = 10000
 let requested
 let movements
 
-// const movements = {
-// 	1: {
-// 		abigail_chen: {
-// 			movement: [82, 15],
-// 			pronunciatio: "🦊",
-// 		},
-// 		mei_lin: {
-// 			movement: [79, 20],
-// 			pronunciatio: "🦊",
-// 		},
-// 	},
-// 	2: {
-// 		abigail_chen: {
-// 			movement: [83, 15],
-// 			pronunciatio: "🐺",
-// 		},
-// 		mei_lin: {
-// 			movement: [80, 20],
-// 			pronunciatio: "🐺",
-// 		},
-// 	},
-// }
-
 export const updateGenerator = (
 	simulationId,
 	personas,
@@ -55,18 +32,6 @@ export const updateGenerator = (
 ) =>
 	async function update(time, delta) {
 		const step = stepRef.current
-
-		// .then((response) => {
-		// 	// Store the result in the movements variable
-		// 	movements = response.data
-
-		// 	// You can now use the movements variable as needed
-		// 	console.log("Movements:", movements)
-		// })
-		// .catch((error) => {
-		// 	// Handle errors
-		// 	console.error(error)
-		// })
 
 		const { height: canvasHeight, width: canvasWidth, tileWidth } = mapRef.current
 
@@ -220,7 +185,7 @@ const performProcessPhase = async (
 	// }
 	if (!requested && canMakeRequest(step)) {
 		requested = true
-		movements = await SimulationsApi.move(simulationId)
+		movements = await SimulationsApi.step(simulationId)
 
 		requested = false
 	}
