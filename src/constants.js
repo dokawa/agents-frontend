@@ -13,3 +13,8 @@ export const PRONUNCIATIO_Y_OFFSET = -70
 
 export const CAMERA_STARTING_X = 68
 export const CAMERA_STARTING_Y = 58
+
+export const CAMERA_MODE = {
+	FREE_MOVEMENT: "free",
+	FOLLOWING: "following",
+}

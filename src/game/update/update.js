@@ -1,18 +1,18 @@
-import { useEffect } from "react"
-import { STEP, SEC_PER_STEP, PLAY_SPEED } from "../../constants"
+import { SEC_PER_STEP } from "../../constants"
 import { performExecutePhase } from "./performExecute"
 import { moveCamera } from "./moveCamera"
-import { useSimulations } from "../../hooks/useSimulations"
 import SimulationsApi from "../../api/SimulationsApi"
 
 let sec_per_step = SEC_PER_STEP
 
 // <step> -- one full loop around all three phases determined by <phase> is
 // a step. We use this to link the steps in the backend.
+
 // let sim_code = "{{sim_code}}";
 let step_size = sec_per_step * 1000 // 10 seconds = 10000
 let requested
-let movements
+
+let movements = {}
 
 export const updateGenerator = (
 	simulationId,
@@ -20,6 +20,7 @@ export const updateGenerator = (
 	speech_bubbles,
 	pronunciatios,
 	playerRef,
+	cameraModeRef,
 	mapRef,
 	stepRef,
 	start_datetime,
@@ -30,16 +31,15 @@ export const updateGenerator = (
 	finishExecuteCount,
 	resetExecuteCount,
 ) =>
-	async function update(time, delta) {
+	function update() {
 		const step = stepRef.current
 
 		const { height: canvasHeight, width: canvasWidth, tileWidth } = mapRef.current
-
-		// console.log("executeCount", executeCount)
 		const player = playerRef.current
 		const inputKeyboard = this.input.keyboard
 
-		let curr_maze = "the_ville"
+		// TODO maybe select map
+		// let curr_maze = "the_ville"
 
 		// TODO figure out what is this
 		let sim_code = "ABCD"
@@ -48,23 +48,16 @@ export const updateGenerator = (
 
 		setupPlayAndPauseButtons(play_context)
 
-		moveCamera(player, inputKeyboard, canvasWidth, canvasHeight, tileWidth)
+		console.log("movements", movements)
 
-		// TODO add forms to get current focus
+		moveCamera(player, cameraModeRef, inputKeyboard, canvasWidth, canvasHeight, tileWidth)
 
-		//   let curr_focused_persona = document.getElementById("temp_focus").textContent;
-		//   if (curr_focused_persona != "") {
-		//   	player.body.x = personas[curr_focused_persona].body.x;
-		//   	player.body.y = personas[curr_focused_persona].body.y;
-		//   	document.getElementById("temp_focus").innerHTML = "";
-		//   }
-
-		// *** MOVE PERSONAS ***
+		// *** MOVE AGENTS ***
 		// Moving personas take place in three distinct phases: "process," "update,"
 		// and "execute." These phases are determined by the value of <phase>.
 		// Only one of the three phases is incurred in each update cycle.
 		if (phase == "process") {
-			phase = performProcessPhase(simulationId, step, sim_code, personas, curr_maze, tileWidth, phase)
+			phase = performProcessPhase(simulationId, movements, step, phase)
 			console.log("process")
 			// TODO fix update logic
 		} else if (phase == "update") {
@@ -81,14 +74,14 @@ export const updateGenerator = (
 			// The executeCountMax is computed by tileWidth/movement_speed, which
 			// defines a one step sequence in this world.
 			// document.getElementById("game-time-content").innerHTML = currentMovements["meta"]["curr_time"]
-			console.log("execute")
+
 			if (!movements) {
 				return
 			}
 
 			const currentMovements = movements[step]
 
-			const executeResult = performExecutePhase(
+			phase = performExecutePhase(
 				personas,
 				speech_bubbles,
 				pronunciatios,
@@ -103,10 +96,11 @@ export const updateGenerator = (
 				stepRef,
 			)
 
-			phase = executeResult.phase
+			console.log("execute")
 		}
 	}
 
+// TODO maybe can be refactored to ui
 const setupPlayAndPauseButtons = (play_context) => {
 	var play_button = document.getElementById("play_button")
 	var pause_button = document.getElementById("pause_button")
@@ -124,7 +118,27 @@ const setupPlayAndPauseButtons = (play_context) => {
 	}
 }
 
-async function performUpdatePhase(step, phase, sim_code) {
+const performProcessPhase = (simulationId, step, phase) => {
+	// if (!requested && canMakeRequest(step)) {
+	// 	requested = true
+	// 	movements = await SimulationsApi.step(simulationId)
+
+	// 	requested = false
+	// }
+
+	if (movements.length == 0 || !(step in movements)) {
+		SimulationsApi.step(simulationId).then((newMovements) => {
+			console.log("newmov", newMovements)
+
+			movements = newMovements
+		})
+	}
+
+	phase = "update"
+	return phase
+}
+
+function performUpdatePhase(step, phase, sim_code) {
 	// We do this by continuously asking the backend server if it is ready.
 	// The backend server is ready when it returns a json that has a key-val
 	// pair with "<move>": true.
@@ -154,42 +168,11 @@ async function performUpdatePhase(step, phase, sim_code) {
 	return phase
 }
 
-const canMakeRequest = (step) => {
+const canMakeRequest = (step, movements) => {
+	// If our step is not past the movements length
 	if (movements) {
 		return step > Object.keys(movements).length
 	}
 
 	return true
-}
-
-const performProcessPhase = async (
-	simulationId,
-	step,
-	sim_code,
-	personas,
-	curr_maze,
-	tileWidth,
-	phase,
-) => {
-	// "process" takes all current locations of the personas and send them to
-	// the frontend server in a json form. Here, we first create the json
-	// file that records all persona locations:
-	// let data = { step: step, sim_code: sim_code, environment: {} }
-	// for (let i = 0; i < Object.keys(personas).length; i++) {
-	// 	let persona_name = Object.keys(personas)[i]
-	// 	data["environment"][persona_name] = {
-	// 		maze: curr_maze,
-	// 		x: Math.ceil(personas[persona_name].body.position.x / tileWidth),
-	// 		y: Math.ceil(personas[persona_name].body.position.y / tileWidth),
-	// 	}
-	// }
-	if (!requested && canMakeRequest(step)) {
-		requested = true
-		movements = await SimulationsApi.step(simulationId)
-
-		requested = false
-	}
-
-	phase = "update"
-	return phase
 }

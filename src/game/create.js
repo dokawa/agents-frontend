@@ -8,7 +8,7 @@ import {
 	TILE_WIDTH,
 } from "../constants"
 
-export const createGenerator = (personas, speech_bubbles, pronunciatios, mapRef, playerRef) =>
+export const createGenerator = (agents, speech_bubbles, pronunciatios, mapRef, playerRef) =>
 	function create() {
 		const context = this
 
@@ -24,9 +24,9 @@ export const createGenerator = (personas, speech_bubbles, pronunciatios, mapRef,
 		createMap(map)
 		setupCamera(context, playerRef, map)
 
-		// *** SET UP PERSONAS ***
-		createSprites(context, tileWidth, personas, speech_bubbles, pronunciatios)
-		createWalkingAnimations(context, personas)
+		// *** SET UP AGENTS ***
+		createSprites(context, tileWidth, agents, speech_bubbles, pronunciatios)
+		createWalkingAnimations(context, agents)
 	}
 
 const createMap = (map) => {
@@ -106,11 +106,11 @@ const createMap = (map) => {
 	foregroundL1Layer.setDepth(2)
 	foregroundL2Layer.setDepth(2)
 }
-const createWalkingAnimations = (context, personas) => {
+const createWalkingAnimations = (context, agents) => {
 	// Create the player's walking animations from the texture atlas. These are
 	// stored in the global animation manager so any sprite can access them.
 	const anims = context.anims
-	personas.map((agent) => {
+	agents.map((agent) => {
 		let agentKey = agent.key
 		let left_walk_name = agentKey + "-left-walk"
 		let right_walk_name = agentKey + "-right-walk"
@@ -167,8 +167,8 @@ const createWalkingAnimations = (context, personas) => {
 	})
 }
 
-const createSprites = (context, tileWidth, personas, speech_bubbles, pronunciatios) => {
-	personas.map((agent) => {
+const createSprites = (context, tileWidth, agents, speech_bubbles, pronunciatios) => {
+	agents.map((agent) => {
 		const agentKey = agent.key
 
 		let start_pos = [
@@ -237,7 +237,7 @@ function setupDebugging(context) {
 function setupCamera(context, playerRef, map) {
 	// *** SET UP CAMERA ***
 	// "player" is to be set as the center of mass for our "camera." We
-	// basically create a game character sprite as we would for our personas
+	// basically create a game character sprite as we would for our agents
 	// but we move it to depth -1 and let it pass through the collision map;
 	// that is, do not have the following line:
 	// this.physics.add.collider(player, collisionsLayer);

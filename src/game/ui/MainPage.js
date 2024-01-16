@@ -1,18 +1,20 @@
-import { Position } from "./ui/Position"
+import { CharacterDisplay } from "./CharacterDisplay"
+import { Position } from "./Position"
 
-export const MainPage = () => {
+export const MainPage = ({ agents, onCharacterClick }) => {
 	return (
 		<div>
 			<div id='game-container' style={{ textAlign: "center" }}></div>
-
-			<div style={{ width: "55%", margin: "0 auto", marginTop: "4.5em" }}>
-				<h3 style={{ marginBottom: "-0.5em", fontSize: "1.5em" }}>Current Time:</h3>
+			<hr style={{ borderColor: "#999999" }} />
+			<div style={{ width: "55%", margin: "0 auto", marginTop: "1em" }}>
+				<h3 style={{ marginBottom: "-0.5em", fontSize: "1em" }}>Current Time:</h3>
 				<div className='row'>
 					<div className='col-md-8' id='game-time' style={{}}>
 						<h2>
 							<span id='game-time-content'></span>
 						</h2>
 					</div>
+
 					<div className='col-md-4'>
 						<Position x={2} y={3} />
 						<h2 style={{ textAlign: "right" }}>
@@ -29,12 +31,12 @@ export const MainPage = () => {
 							</button>
 						</h2>
 					</div>
+					{agents &&
+						agents.map((agent, index) => (
+							<CharacterDisplay key={index} agent={agent} onCharacterClick={onCharacterClick} />
+						))}
 				</div>
 			</div>
-
-			<hr style={{ borderColor: "#999999" }} />
-
-			<div style={{ paddingBottom: "15em" }}></div>
 		</div>
 	)
 }
