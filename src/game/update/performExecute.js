@@ -66,12 +66,16 @@ export const performExecutePhase = (
 		if (isCurrentMovementsEmpty(currentMovements, agentKey)) {
 			finishExecuteCount(agentKey)
 		} else if (isFirstIteration(agentKey)) {
-			const personaAction = currentMovements[agentKey]["movement"]
+			const personaAction = currentMovements[agentKey]
 
-			let curr_x = personaAction[0]
-			let curr_y = personaAction[1]
+			let curr_x = personaAction["movement"][0]
+			let curr_y = personaAction["movement"][1]
 			movement_target[agentKey] = [curr_x * tileWidth, curr_y * tileWidth]
-			let pronunciatio_content = personaAction["pronunciatio"]
+			// let pronunciatio_content = personaAction["pronunciatio"]
+			const emojiCode = personaAction["pronunciatio"]
+			const emojiValue = parseInt(emojiCode, 16)
+
+			let pronunciatio_content = !isNaN(emojiValue) ? String.fromCodePoint(emojiValue) : ""
 
 			let initials = getInitials(agentKey)
 			pronunciatios[agentKey].setText(initials + ": " + pronunciatio_content)
@@ -128,7 +132,7 @@ export const performExecutePhase = (
 	} else {
 		decrementExecuteCount()
 	}
-	return { executeCount, phase }
+	return phase
 }
 
 const getInitials = (curr_persona_name) => {
@@ -190,19 +194,18 @@ const playAnimation = (character, agentKey, movement_target) => {
 }
 function fillDescription(executeCount, executeCountMax, personas, currentMovements) {
 	if (executeCount == executeCountMax) {
-		for (let i = 0; i < Object.keys(personas).length; i++) {
+		for (let agentKey in personas) {
 			// let action_description = ""
-			let curr_persona_name = Object.keys(personas)[i]
-			// let curr_persona_name_os = curr_persona_name.replace(/ /g, "_")
+
 			// let description_content = currentMovements["persona"][curr_persona_name]["description"]
 			let chat_content = ""
 
-			if (currentMovements[curr_persona_name]["chat"] != null) {
-				for (let j = 0; j < currentMovements[curr_persona_name]["chat"].length; j++) {
+			if (currentMovements[agentKey]["chat"] != null) {
+				for (let j = 0; j < currentMovements[agentKey]["chat"].length; j++) {
 					chat_content +=
-						currentMovements[curr_persona_name]["chat"][j][0] +
+						currentMovements[agentKey]["chat"][j][0] +
 						": " +
-						currentMovements[curr_persona_name]["chat"][j][1] +
+						currentMovements[agentKey]["chat"][j][1] +
 						"<br>"
 				}
 			} else {

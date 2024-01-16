@@ -88,7 +88,7 @@ export const updateGenerator = (
 
 			const currentMovements = movements[step]
 
-			const executeResult = performExecutePhase(
+			phase = performExecutePhase(
 				personas,
 				speech_bubbles,
 				pronunciatios,
@@ -102,8 +102,6 @@ export const updateGenerator = (
 				resetExecuteCount,
 				stepRef,
 			)
-
-			phase = executeResult.phase
 		}
 	}
 
@@ -155,6 +153,7 @@ async function performUpdatePhase(step, phase, sim_code) {
 }
 
 const canMakeRequest = (step) => {
+	// If our step is not past the movements length
 	if (movements) {
 		return step > Object.keys(movements).length
 	}
