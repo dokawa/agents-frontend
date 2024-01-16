@@ -1,8 +1,11 @@
 import {
+	CAMERA_STARTING_X,
+	CAMERA_STARTING_Y,
 	PRONUNCIATIO_X_OFFSET,
 	PRONUNCIATIO_Y_OFFSET,
 	SPEECH_BUBBLE_X_OFFSET,
 	SPEECH_BUBBLE_Y_OFFSET,
+	TILE_WIDTH,
 } from "../constants"
 
 export const createGenerator = (personas, speech_bubbles, pronunciatios, mapRef, playerRef) =>
@@ -242,7 +245,7 @@ function setupCamera(context, playerRef, map) {
 	// The image  used for the sprite has a bit of whitespace, so I'm using
 	// setSize & setOffset to control the size of the player's body.
 	playerRef.current = context.physics.add
-		.sprite(2400, 588, "atlas", "down")
+		.sprite(CAMERA_STARTING_X * TILE_WIDTH, CAMERA_STARTING_Y * TILE_WIDTH, "atlas", "down")
 		.setSize(30, 40)
 		.setOffset(0, 0)
 	const player = playerRef.current

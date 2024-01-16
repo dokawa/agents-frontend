@@ -16,7 +16,7 @@ export const performExecutePhase = (
 	personas,
 	speech_bubbles,
 	pronunciatios,
-	execute_movement,
+	currentMovements,
 	executeCount,
 	executeCountMax,
 	tileWidth,
@@ -49,6 +49,10 @@ export const performExecutePhase = (
 		return nameFormat
 	}
 
+	const isCurrentMovementsEmpty = (currentMovements, agentKey) => {
+		return !currentMovements || !currentMovements[agentKey] || !currentMovements[agentKey]["movement"]
+	}
+
 	// console.log("executeCount", executeCount, stepRef.current)
 
 	personas.map((persona) => {
@@ -59,10 +63,10 @@ export const performExecutePhase = (
 		let curr_pronunciatio = pronunciatios[agentKey]
 		const character = persona.character
 
-		if (!execute_movement || !execute_movement[agentKey]) {
+		if (isCurrentMovementsEmpty(currentMovements, agentKey)) {
 			finishExecuteCount(agentKey)
 		} else if (isFirstIteration(agentKey)) {
-			const personaAction = execute_movement[agentKey]
+			const personaAction = currentMovements[agentKey]["movement"]
 
 			let curr_x = personaAction[0]
 			let curr_y = personaAction[1]
@@ -115,15 +119,15 @@ export const performExecutePhase = (
 	// 		// let action_description = ""
 	// 		let curr_persona_name = Object.keys(personas)[i]
 	// 		// let curr_persona_name_os = curr_persona_name.replace(/ /g, "_")
-	// 		// let description_content = execute_movement["persona"][curr_persona_name]["description"]
+	// 		// let description_content = currentMovements["persona"][curr_persona_name]["description"]
 	// 		let chat_content = ""
 
-	// 		if (execute_movement[curr_persona_name]["chat"] != null) {
-	// 			for (let j = 0; j < execute_movement[curr_persona_name]["chat"].length; j++) {
+	// 		if (currentMovements[curr_persona_name]["chat"] != null) {
+	// 			for (let j = 0; j < currentMovements[curr_persona_name]["chat"].length; j++) {
 	// 				chat_content +=
-	// 					execute_movement[curr_persona_name]["chat"][j][0] +
+	// 					currentMovements[curr_persona_name]["chat"][j][0] +
 	// 					": " +
-	// 					execute_movement[curr_persona_name]["chat"][j][1] +
+	// 					currentMovements[curr_persona_name]["chat"][j][1] +
 	// 					"<br>"
 	// 			}
 	// 		} else {
@@ -141,7 +145,7 @@ export const performExecutePhase = (
 	console.log("step", stepRef.current)
 	console.log("executeCount", executeCount)
 
-	if (allFinished()) {
+	if (currentMovements && allFinished()) {
 		stepRef.current = stepRef.current + 1
 		console.log("allfinished", executeCountMax)
 		resetExecuteCount()

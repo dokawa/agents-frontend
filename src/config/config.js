@@ -5,21 +5,6 @@ import { WIDTH, HEIGHT, TILE_WIDTH, PLAY_SPEED } from "../constants"
 import AgentsApi from "../api/AgentsApi"
 import humps from "humps"
 
-// Variables for storing movements that are sent from the backend server.
-// TODO delete this stubs from BE
-export const persona_init_pos = [
-	{
-		id: 1,
-		name: "Abigail Chen",
-		sprite_name: "Abigail_Chen.png",
-	},
-	{
-		id: 1,
-		name: "Mei Lin",
-		sprite_name: "Abigail_Chen.png",
-	},
-]
-
 const executeCountMax = TILE_WIDTH / PLAY_SPEED
 const datetime = "01012024"
 let start_datetime = new Date(Date.parse(datetime))
@@ -29,6 +14,9 @@ let phase = "process"
 var pronunciatios = {}
 var speech_bubbles = {}
 const executeCount = {}
+
+// TODO get simulation id from dropdown
+const simulationId = 1
 
 // TODO get agents from simulation
 const personas = await AgentsApi.list()
@@ -72,6 +60,7 @@ export const getConfig = (playerRef, mapRef, stepRef) => ({
 		preload: preloadGenerator(personas),
 		create: createGenerator(personas, speech_bubbles, pronunciatios, mapRef, playerRef),
 		update: updateGenerator(
+			simulationId,
 			personas,
 			speech_bubbles,
 			pronunciatios,

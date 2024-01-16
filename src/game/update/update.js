@@ -38,6 +38,7 @@ let movements
 // }
 
 export const updateGenerator = (
+	simulationId,
 	personas,
 	speech_bubbles,
 	pronunciatios,
@@ -98,7 +99,7 @@ export const updateGenerator = (
 		// and "execute." These phases are determined by the value of <phase>.
 		// Only one of the three phases is incurred in each update cycle.
 		if (phase == "process") {
-			phase = performProcessPhase(step, sim_code, personas, curr_maze, tileWidth, phase)
+			phase = performProcessPhase(simulationId, step, sim_code, personas, curr_maze, tileWidth, phase)
 			console.log("process")
 			// TODO fix update logic
 		} else if (phase == "update") {
@@ -196,7 +197,15 @@ const canMakeRequest = (step) => {
 	return true
 }
 
-const performProcessPhase = async (step, sim_code, personas, curr_maze, tileWidth, phase) => {
+const performProcessPhase = async (
+	simulationId,
+	step,
+	sim_code,
+	personas,
+	curr_maze,
+	tileWidth,
+	phase,
+) => {
 	// "process" takes all current locations of the personas and send them to
 	// the frontend server in a json form. Here, we first create the json
 	// file that records all persona locations:
@@ -211,7 +220,7 @@ const performProcessPhase = async (step, sim_code, personas, curr_maze, tileWidt
 	// }
 	if (!requested && canMakeRequest(step)) {
 		requested = true
-		movements = await SimulationsApi.move()
+		movements = await SimulationsApi.move(simulationId)
 
 		requested = false
 	}

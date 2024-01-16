@@ -3,7 +3,7 @@ import axios, { apiBaseURL } from "./axios"
 const simulationsApiBaseURL = `${apiBaseURL}/simulations`
 
 export default class SimulationsApi {
-	static move() {
-		return axios.get(`${simulationsApiBaseURL}/simulation/move`)
+	static move(simulationId) {
+		return axios.get(`${simulationsApiBaseURL}/simulation/${simulationId}/step`)
 	}
 }

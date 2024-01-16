@@ -11,7 +11,5 @@ export const SPEECH_BUBBLE_Y_OFFSET = -39
 export const PRONUNCIATIO_X_OFFSET = 32
 export const PRONUNCIATIO_Y_OFFSET = -70
 
-export const ID_TO_SPRITE_NAME = {
-	abigailChen: "Abigail_Chen",
-	meiLin: "Mei_Lin",
-}
+export const CAMERA_STARTING_X = 68
+export const CAMERA_STARTING_Y = 58

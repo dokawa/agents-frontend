@@ -1,4 +1,3 @@
-import { ID_TO_SPRITE_NAME } from "../constants"
 import humps from "humps"
 
 export const preloadGenerator = (personas) =>
