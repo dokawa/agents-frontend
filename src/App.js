@@ -1,10 +1,13 @@
 import React from "react"
 import Game from "./game/game"
+import { PronunciatioProvider } from "./game/pronunciatioContext"
 
 function App() {
 	return (
 		<div className='App'>
-			<Game />
+			<PronunciatioProvider>
+				<Game />
+			</PronunciatioProvider>
 		</div>
 	)
 }

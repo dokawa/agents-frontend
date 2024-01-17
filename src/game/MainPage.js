@@ -1,6 +1,7 @@
+import { CharacterEntry } from "./ui/CharacterEntry"
 import { Position } from "./ui/Position"
 
-export const MainPage = () => {
+export const MainPage = ({ agents, pronunciatios }) => {
 	return (
 		<div>
 			<div id='game-container' style={{ textAlign: "center" }}></div>
@@ -29,6 +30,10 @@ export const MainPage = () => {
 							</button>
 						</h2>
 					</div>
+					{agents &&
+						agents.map((agent) => (
+							<CharacterEntry key={agent.agentKey} agent={agent} pronunciatios={pronunciatios} />
+						))}
 				</div>
 			</div>
 

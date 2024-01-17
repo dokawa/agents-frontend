@@ -2,10 +2,7 @@ import { preloadGenerator } from "../game/preload"
 import { createGenerator } from "../game/create"
 import { updateGenerator } from "../game/update/update"
 import { WIDTH, HEIGHT, TILE_WIDTH, PLAY_SPEED } from "../constants"
-import AgentsApi from "../api/AgentsApi"
-import humps from "humps"
 import Phaser from "phaser"
-import SimulationsApi from "../api/SimulationsApi"
 
 const executeCountMax = TILE_WIDTH / PLAY_SPEED
 const datetime = "01012024"
@@ -13,46 +10,21 @@ let start_datetime = new Date(Date.parse(datetime))
 
 let phase = "process"
 
-var pronunciatios = {}
 var speech_bubbles = {}
-const executeCount = {}
 
-// TODO get simulation id from dropdown
-const simulationId = 1
-
-// TODO get agents from simulation
-const personas = await AgentsApi.list()
-
-personas.map((agent) => {
-	const agentKey = humps.camelize(agent.name)
-	agent.key = agentKey
-})
-
-const decrementExecuteCount = () => {
-	personas.map((persona) => {
-		executeCount[persona.key] -= 1
-	})
-}
-
-const resetExecuteCount = () => {
-	personas.map((persona) => {
-		executeCount[persona.key] = executeCountMax
-	})
-}
-
-resetExecuteCount()
-
-const resetSimulationCount = async () => {
-	await SimulationsApi.resetCount(simulationId)
-}
-
-resetSimulationCount()
-
-const finishExecuteCount = (agentKey) => {
-	executeCount[agentKey] = executeCountMax + 1
-}
-
-export const getConfig = (playerRef, mapRef, stepRef) => ({
+export const getConfig = (
+	agents,
+	pronunciatios,
+	setPronunciatios,
+	simulationId,
+	playerRef,
+	mapRef,
+	stepRef,
+	executeCount,
+	decrementExecuteCount,
+	resetExecuteCount,
+	finishExecuteCount,
+) => ({
 	type: Phaser.AUTO,
 	width: WIDTH,
 	height: HEIGHT,
@@ -65,13 +37,14 @@ export const getConfig = (playerRef, mapRef, stepRef) => ({
 		},
 	},
 	scene: {
-		preload: preloadGenerator(personas),
-		create: createGenerator(personas, speech_bubbles, pronunciatios, mapRef, playerRef),
+		preload: preloadGenerator(agents),
+		create: createGenerator(agents, speech_bubbles, pronunciatios, mapRef, playerRef),
 		update: updateGenerator(
 			simulationId,
-			personas,
+			agents,
 			speech_bubbles,
 			pronunciatios,
+			setPronunciatios,
 			playerRef,
 			mapRef,
 			stepRef,

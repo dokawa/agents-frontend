@@ -12,13 +12,14 @@ let sec_per_step = SEC_PER_STEP
 // let sim_code = "{{sim_code}}";
 let step_size = sec_per_step * 1000 // 10 seconds = 10000
 let requested
-let movements
+let movements = {}
 
 export const updateGenerator = (
 	simulationId,
 	personas,
 	speech_bubbles,
 	pronunciatios,
+	setPronunciatios,
 	playerRef,
 	mapRef,
 	stepRef,
@@ -30,7 +31,7 @@ export const updateGenerator = (
 	finishExecuteCount,
 	resetExecuteCount,
 ) =>
-	async function update(time, delta) {
+	function update(time, delta) {
 		const step = stepRef.current
 
 		const { height: canvasHeight, width: canvasWidth, tileWidth } = mapRef.current
@@ -92,6 +93,7 @@ export const updateGenerator = (
 				personas,
 				speech_bubbles,
 				pronunciatios,
+				setPronunciatios,
 				currentMovements,
 				executeCount,
 				executeCountMax,
@@ -182,11 +184,17 @@ const performProcessPhase = async (
 	// 		y: Math.ceil(personas[persona_name].body.position.y / tileWidth),
 	// 	}
 	// }
-	if (!requested && canMakeRequest(step)) {
-		requested = true
-		movements = await SimulationsApi.step(simulationId)
+	// if (!requested && canMakeRequest(step)) {
+	// 	requested = true
+	// 	movements = await SimulationsApi.step(simulationId)
 
-		requested = false
+	// 	requested = false
+	// }
+
+	if (!(step in movements)) {
+		SimulationsApi.step(simulationId).then((newMovements) => {
+			movements = { ...movements, ...newMovements }
+		})
 	}
 
 	phase = "update"

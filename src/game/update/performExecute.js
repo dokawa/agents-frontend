@@ -7,6 +7,7 @@ import {
 	TILE_WIDTH,
 } from "../../constants"
 import humps from "humps"
+import { getPronunciatioContent } from "../utils"
 
 const movement_speed = PLAY_SPEED
 const movement_target = {}
@@ -16,6 +17,7 @@ export const performExecutePhase = (
 	personas,
 	speech_bubbles,
 	pronunciatios,
+	setPronunciatios,
 	currentMovements,
 	executeCount,
 	executeCountMax,
@@ -71,14 +73,17 @@ export const performExecutePhase = (
 			let curr_x = personaAction["movement"][0]
 			let curr_y = personaAction["movement"][1]
 			movement_target[agentKey] = [curr_x * tileWidth, curr_y * tileWidth]
-			// let pronunciatio_content = personaAction["pronunciatio"]
-			const emojiCode = personaAction["pronunciatio"]
-			const emojiValue = parseInt(emojiCode, 16)
 
-			let pronunciatio_content = !isNaN(emojiValue) ? String.fromCodePoint(emojiValue) : ""
+			const emojiCode = personaAction["pronunciatio"]
+
+			let pronunciatioContent = getPronunciatioContent(emojiCode)
 
 			let initials = getInitials(agentKey)
-			pronunciatios[agentKey].setText(initials + ": " + pronunciatio_content)
+			// pronunciatios[agentKey].setText(initials + ": " + pronunciatioContent)
+			setPronunciatios((prev) => ({
+				...prev,
+				...{ [agentKey]: initials + ": " + pronunciatioContent },
+			}))
 		}
 
 		// console.log(curr_persona_name)
