@@ -1,4 +1,4 @@
-export const CharacterEntry = ({ agent, pronunciatios }) => {
+export const CharacterDisplay = ({ agent, pronunciatios }) => {
 	console.log("pronun", pronunciatios)
 	return (
 		agent && (

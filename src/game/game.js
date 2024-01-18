@@ -64,8 +64,6 @@ export const Game = () => {
 		await SimulationsApi.resetCount(simulationId)
 	}
 
-	resetSimulationCount()
-
 	const finishExecuteCount = (agentKey) => {
 		executeCount[agentKey] = executeCountMax + 1
 	}
@@ -90,6 +88,8 @@ export const Game = () => {
 		}
 
 		const game = new Phaser.Game(config)
+
+		resetSimulationCount()
 
 		return () => {
 			// Cleanup Phaser game when component unmounts

@@ -1,4 +1,4 @@
-import { CharacterEntry } from "./ui/CharacterEntry"
+import { CharacterDisplay } from "./ui/CharacterDisplay"
 import { Position } from "./ui/Position"
 
 export const MainPage = ({ agents, pronunciatios }) => {
@@ -32,7 +32,7 @@ export const MainPage = ({ agents, pronunciatios }) => {
 					</div>
 					{agents &&
 						agents.map((agent) => (
-							<CharacterEntry key={agent.agentKey} agent={agent} pronunciatios={pronunciatios} />
+							<CharacterDisplay key={agent.agentKey} agent={agent} pronunciatios={pronunciatios} />
 						))}
 				</div>
 			</div>
