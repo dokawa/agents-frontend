@@ -1,4 +1,4 @@
-export const CharacterDisplay = ({ agent, pronunciatios }) => {
+export const CharacterDisplay = ({ agent, pronunciatios, onCharacterClick }) => {
 	const getEmoji = () => {
 		if (pronunciatios[agent.key]) {
 			const content = pronunciatios[agent.key].text
@@ -9,7 +9,6 @@ export const CharacterDisplay = ({ agent, pronunciatios }) => {
 		return ""
 	}
 
-	console.log("pronun", agent, pronunciatios)
 	return (
 		agent && (
 			<div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
@@ -17,8 +16,10 @@ export const CharacterDisplay = ({ agent, pronunciatios }) => {
 					className='media-object'
 					src={`assets/characters/profile/${agent.spriteName}.png`}
 					style={{ width: "2em" }}
+					onClick={() => onCharacterClick(agent.character)}
 				></img>
 				<div>{agent.name}</div>
+				<div>{`(${agent.currTile[0]}, ${agent.currTile[1]})`}</div>
 				<div>{getEmoji()}</div>
 			</div>
 		)

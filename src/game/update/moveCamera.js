@@ -1,10 +1,34 @@
-import { WIDTH, HEIGHT, TILE_WIDTH } from "../../constants"
+import { WIDTH, HEIGHT, TILE_WIDTH, CAMERA_MODE } from "../../constants"
 
-export const moveCamera = (player, inputKeyboard, canvasWidth, canvasHeight, tileWidth) => {
+export const moveCamera = (
+	player,
+	cameraModeRef,
+	inputKeyboard,
+	canvasWidth,
+	canvasHeight,
+	tileWidth,
+) => {
 	// *** MOVE CAMERA ***
 	// This is where we finish up the camera setting we started in the create()
 	// function. We set the movement speed of the camera and wire up the keys to
 	// map to the actual movement.
+	const mode = cameraModeRef.current[0]
+
+	if (inputKeyboard.addKey("ESC").isDown) {
+		console.log("eeeesesssc")
+		cameraModeRef.current = [CAMERA_MODE.FREE_MOVEMENT, player]
+	}
+
+	if (mode == CAMERA_MODE.FOLLOWING) {
+		const charToFollow = cameraModeRef.current[1]
+		player.body.x = charToFollow.body.x
+		player.body.y = charToFollow.body.y
+	} else {
+		cameraFreeMovement(player, inputKeyboard, canvasWidth, canvasHeight, tileWidth)
+	}
+}
+
+const cameraFreeMovement = (player, inputKeyboard, canvasWidth, canvasHeight, tileWidth) => {
 	const camera_speed = 800
 
 	const cursors = inputKeyboard.createCursorKeys()

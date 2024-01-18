@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react"
 import Phaser from "phaser"
-import { STEP } from "../constants"
+import { CAMERA_MODE, STEP } from "../constants"
 import { getConfig } from "../config/config"
 import { MainPage } from "./MainPage"
 import SimulationsApi from "../api/SimulationsApi"
@@ -12,6 +12,7 @@ export const Game = () => {
 	const mapRef = useRef()
 	const playerRef = useRef()
 	const stepRef = useRef(STEP)
+	const cameraModeRef = useRef([undefined, undefined]) // (MODE, character)
 
 	const pronunciatioContext = usePronunciatioContext()
 
@@ -68,12 +69,17 @@ export const Game = () => {
 		executeCount[agentKey] = executeCountMax + 1
 	}
 
+	const onCharacterClick = (character) => {
+		cameraModeRef.current = [CAMERA_MODE.FOLLOWING, character]
+	}
+
 	const config = getConfig(
 		agents,
 		pronunciatioContext.pronunciatios,
 		pronunciatioContext.setPronunciatios,
 		simulationId,
 		playerRef,
+		cameraModeRef,
 		mapRef,
 		stepRef,
 		executeCount,
@@ -97,7 +103,13 @@ export const Game = () => {
 		}
 	}, [agents])
 
-	return <MainPage agents={agents} pronunciatios={pronunciatioContext.pronunciatios} />
+	return (
+		<MainPage
+			agents={agents}
+			pronunciatios={pronunciatioContext.pronunciatios}
+			onCharacterClick={onCharacterClick}
+		/>
+	)
 }
 
 export default Game

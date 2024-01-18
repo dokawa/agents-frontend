@@ -56,11 +56,12 @@ export const performExecutePhase = (
 	}
 
 	console.log("currentMovements", currentMovements)
+	console.log("step", stepRef.current)
+	console.log("executeCount", executeCount)
 
 	personas.map((persona) => {
 		// name keys are camelized by axios interceptor
 		let agentKey = humps.camelize(persona.name)
-		let curr_persona = persona
 		let curr_speech_bubble = speech_bubbles[agentKey]
 		let curr_pronunciatio = pronunciatios[agentKey]
 		const character = persona.character
@@ -81,6 +82,8 @@ export const performExecutePhase = (
 			let initials = getInitials(agentKey)
 			const pronun = pronunciatios[agentKey]
 			pronun.setText(initials + ": " + pronunciatioContent)
+
+			// This forces update on pronunciatios for showing in the character menu
 			setPronunciatios((pronunciatios) => ({
 				...pronunciatios,
 				...{ [agentKey]: pronunciatios[agentKey] },
@@ -127,9 +130,6 @@ export const performExecutePhase = (
 	// TODO check
 	// Filling in the action description.
 	// fillDescription(executeCount, executeCountMax, personas, currentMovements)
-
-	console.log("step", stepRef.current)
-	console.log("executeCount", executeCount)
 
 	if (currentMovements && allFinished()) {
 		stepRef.current = stepRef.current + 1

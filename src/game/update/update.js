@@ -12,7 +12,7 @@ let sec_per_step = SEC_PER_STEP
 // let sim_code = "{{sim_code}}";
 let step_size = sec_per_step * 1000 // 10 seconds = 10000
 let requested
-let movements = {}
+let movements
 
 export const updateGenerator = (
 	simulationId,
@@ -21,6 +21,7 @@ export const updateGenerator = (
 	pronunciatios,
 	setPronunciatios,
 	playerRef,
+	cameraModeRef,
 	mapRef,
 	stepRef,
 	start_datetime,
@@ -49,7 +50,7 @@ export const updateGenerator = (
 
 		setupPlayAndPauseButtons(play_context)
 
-		moveCamera(player, inputKeyboard, canvasWidth, canvasHeight, tileWidth)
+		moveCamera(player, cameraModeRef, inputKeyboard, canvasWidth, canvasHeight, tileWidth)
 
 		// TODO add forms to get current focus
 
@@ -124,7 +125,35 @@ const setupPlayAndPauseButtons = (play_context) => {
 	}
 }
 
-async function performUpdatePhase(step, phase, sim_code) {
+const performProcessPhase = async (
+	simulationId,
+	step,
+	sim_code,
+	personas,
+	curr_maze,
+	tileWidth,
+	phase,
+) => {
+	// if (!requested && canMakeRequest(step)) {
+	// 	requested = true
+	// 	movements = await SimulationsApi.step(simulationId)
+
+	// 	requested = false
+	// }
+
+	if (!movements || !(step in movements)) {
+		SimulationsApi.step(simulationId).then((newMovements) => {
+			movements = { ...movements, ...newMovements }
+		})
+	}
+
+	console.log("movements", movements)
+
+	phase = "update"
+	return phase
+}
+
+function performUpdatePhase(step, phase, sim_code) {
 	// We do this by continuously asking the backend server if it is ready.
 	// The backend server is ready when it returns a json that has a key-val
 	// pair with "<move>": true.
@@ -161,42 +190,4 @@ const canMakeRequest = (step) => {
 	}
 
 	return true
-}
-
-const performProcessPhase = async (
-	simulationId,
-	step,
-	sim_code,
-	personas,
-	curr_maze,
-	tileWidth,
-	phase,
-) => {
-	// "process" takes all current locations of the personas and send them to
-	// the frontend server in a json form. Here, we first create the json
-	// file that records all persona locations:
-	// let data = { step: step, sim_code: sim_code, environment: {} }
-	// for (let i = 0; i < Object.keys(personas).length; i++) {
-	// 	let persona_name = Object.keys(personas)[i]
-	// 	data["environment"][persona_name] = {
-	// 		maze: curr_maze,
-	// 		x: Math.ceil(personas[persona_name].body.position.x / tileWidth),
-	// 		y: Math.ceil(personas[persona_name].body.position.y / tileWidth),
-	// 	}
-	// }
-	// if (!requested && canMakeRequest(step)) {
-	// 	requested = true
-	// 	movements = await SimulationsApi.step(simulationId)
-
-	// 	requested = false
-	// }
-
-	if (!(step in movements)) {
-		SimulationsApi.step(simulationId).then((newMovements) => {
-			movements = { ...movements, ...newMovements }
-		})
-	}
-
-	phase = "update"
-	return phase
 }

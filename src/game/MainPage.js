@@ -1,7 +1,7 @@
 import { CharacterDisplay } from "./ui/CharacterDisplay"
 import { Position } from "./ui/Position"
 
-export const MainPage = ({ agents, pronunciatios }) => {
+export const MainPage = ({ agents, pronunciatios, onCharacterClick }) => {
 	return (
 		<div>
 			<div id='game-container' style={{ textAlign: "center" }}></div>
@@ -32,7 +32,12 @@ export const MainPage = ({ agents, pronunciatios }) => {
 					</div>
 					{agents &&
 						agents.map((agent) => (
-							<CharacterDisplay key={agent.agentKey} agent={agent} pronunciatios={pronunciatios} />
+							<CharacterDisplay
+								key={agent.agentKey}
+								agent={agent}
+								pronunciatios={pronunciatios}
+								onCharacterClick={onCharacterClick}
+							/>
 						))}
 				</div>
 			</div>
