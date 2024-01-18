@@ -31,9 +31,9 @@ export const MainPage = ({ agents, pronunciatios, onCharacterClick }) => {
 						</h2>
 					</div>
 					{agents &&
-						agents.map((agent) => (
+						agents.map((agent, index) => (
 							<CharacterDisplay
-								key={agent.agentKey}
+								key={index}
 								agent={agent}
 								pronunciatios={pronunciatios}
 								onCharacterClick={onCharacterClick}

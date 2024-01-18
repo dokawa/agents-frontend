@@ -1,14 +1,13 @@
-import { useEffect } from "react"
-import { STEP, SEC_PER_STEP, PLAY_SPEED } from "../../constants"
+import { SEC_PER_STEP } from "../../constants"
 import { performExecutePhase } from "./performExecute"
 import { moveCamera } from "./moveCamera"
-import { useSimulations } from "../../hooks/useSimulations"
 import SimulationsApi from "../../api/SimulationsApi"
 
 let sec_per_step = SEC_PER_STEP
 
 // <step> -- one full loop around all three phases determined by <phase> is
 // a step. We use this to link the steps in the backend.
+
 // let sim_code = "{{sim_code}}";
 let step_size = sec_per_step * 1000 // 10 seconds = 10000
 let requested
@@ -32,12 +31,10 @@ export const updateGenerator = (
 	finishExecuteCount,
 	resetExecuteCount,
 ) =>
-	function update(time, delta) {
+	function update() {
 		const step = stepRef.current
 
 		const { height: canvasHeight, width: canvasWidth, tileWidth } = mapRef.current
-
-		// console.log("executeCount", executeCount)
 		const player = playerRef.current
 		const inputKeyboard = this.input.keyboard
 
@@ -52,16 +49,7 @@ export const updateGenerator = (
 
 		moveCamera(player, cameraModeRef, inputKeyboard, canvasWidth, canvasHeight, tileWidth)
 
-		// TODO add forms to get current focus
-
-		//   let curr_focused_persona = document.getElementById("temp_focus").textContent;
-		//   if (curr_focused_persona != "") {
-		//   	player.body.x = personas[curr_focused_persona].body.x;
-		//   	player.body.y = personas[curr_focused_persona].body.y;
-		//   	document.getElementById("temp_focus").innerHTML = "";
-		//   }
-
-		// *** MOVE PERSONAS ***
+		// *** MOVE AGENTS ***
 		// Moving personas take place in three distinct phases: "process," "update,"
 		// and "execute." These phases are determined by the value of <phase>.
 		// Only one of the three phases is incurred in each update cycle.
@@ -83,7 +71,7 @@ export const updateGenerator = (
 			// The executeCountMax is computed by tileWidth/movement_speed, which
 			// defines a one step sequence in this world.
 			// document.getElementById("game-time-content").innerHTML = currentMovements["meta"]["curr_time"]
-			console.log("execute")
+
 			if (!movements) {
 				return
 			}
@@ -105,9 +93,12 @@ export const updateGenerator = (
 				resetExecuteCount,
 				stepRef,
 			)
+
+			console.log("execute")
 		}
 	}
 
+// TODO maybe can be refactored to ui
 const setupPlayAndPauseButtons = (play_context) => {
 	var play_button = document.getElementById("play_button")
 	var pause_button = document.getElementById("pause_button")

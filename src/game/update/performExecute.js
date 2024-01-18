@@ -7,7 +7,7 @@ import {
 	TILE_WIDTH,
 } from "../../constants"
 import humps from "humps"
-import { getPronunciatioContent } from "../utils"
+import { getInitials, getPronunciatioContent } from "./utils"
 
 const movement_speed = PLAY_SPEED
 const movement_target = {}
@@ -41,16 +41,6 @@ export const performExecutePhase = (
 		return executeCount[agentKey] == executeCountMax
 	}
 
-	const camelCaseToName = (inputString) => {
-		// Add a space before each uppercase letter that is not at the beginning
-		const spacedString = inputString.replace(/([a-z])([A-Z])/g, "$1 $2")
-
-		// Capitalize the first letter of each word
-		const nameFormat = spacedString.replace(/\b\w/g, (char) => char.toUpperCase())
-
-		return nameFormat
-	}
-
 	const isCurrentMovementsEmpty = (currentMovements, agentKey) => {
 		return !currentMovements || !currentMovements[agentKey] || !currentMovements[agentKey]["movement"]
 	}
@@ -61,9 +51,8 @@ export const performExecutePhase = (
 
 	personas.map((persona) => {
 		// name keys are camelized by axios interceptor
-		let agentKey = humps.camelize(persona.name)
-		let curr_speech_bubble = speech_bubbles[agentKey]
-		let curr_pronunciatio = pronunciatios[agentKey]
+		const agentKey = persona.key
+
 		const character = persona.character
 
 		if (isCurrentMovementsEmpty(currentMovements, agentKey)) {
@@ -71,15 +60,15 @@ export const performExecutePhase = (
 		} else if (isFirstIteration(agentKey)) {
 			const personaAction = currentMovements[agentKey]
 
-			let curr_x = personaAction["movement"][0]
-			let curr_y = personaAction["movement"][1]
+			const curr_x = personaAction["movement"][0]
+			const curr_y = personaAction["movement"][1]
 			movement_target[agentKey] = [curr_x * tileWidth, curr_y * tileWidth]
 
 			const emojiCode = personaAction["pronunciatio"]
 
-			let pronunciatioContent = getPronunciatioContent(emojiCode)
+			const pronunciatioContent = getPronunciatioContent(emojiCode)
 
-			let initials = getInitials(agentKey)
+			const initials = getInitials(agentKey)
 			const pronun = pronunciatios[agentKey]
 			pronun.setText(initials + ": " + pronunciatioContent)
 
@@ -90,41 +79,24 @@ export const performExecutePhase = (
 			}))
 		}
 
-		// console.log(curr_persona_name)
 		if (executeCount[agentKey] > 0) {
 			playAnimation(character, agentKey, movement_target)
-
-			curr_pronunciatio.x = character.x + PRONUNCIATIO_X_OFFSET
-			curr_pronunciatio.y = character.y + PRONUNCIATIO_Y_OFFSET
-			curr_speech_bubble.x = character.x + SPEECH_BUBBLE_X_OFFSET
-			curr_speech_bubble.y = character.y + SPEECH_BUBBLE_Y_OFFSET
+			setSpeechBubble(speech_bubbles, agentKey, pronunciatios, character)
 		} else {
 			// Once we are done moving the agents, we move on to the "process"
-			// stage where we will send the current locations of all agents at the
-			// end of the movemments to the backend server
+			// stage where we fetch more data
 
 			character.x = movement_target[agentKey][0] + tileWidth / 2
 			character.y = movement_target[agentKey][1] + tileWidth / 2
 
 			finishExecuteCount(agentKey)
 
+			// This have to be executed after all the other phases
 			if (allFinished()) {
 				phase = "process"
 				return phase
 			}
-			// console.log("finished")
 		}
-
-		// if (curr_persona_name == "meiLin") {
-		// 	console.log(
-		// 		"personaMovement",
-		// 		curr_persona_name,
-		// 		movement_target[curr_persona_name],
-		// 		[curr_persona.body.x, curr_persona.body.y],
-		// 		[curr_persona.x, curr_persona.y],
-		// 		executeCount[curr_persona_name],
-		// 	)
-		// }
 	})
 
 	// TODO check
@@ -139,29 +111,6 @@ export const performExecutePhase = (
 		decrementExecuteCount()
 	}
 	return phase
-}
-
-const getInitials = (curr_persona_name) => {
-	// This is what gives the pronunciatio balloon the name initials. We
-	// use regex to extract the initials of the personas.
-	// E.g., "Dolores Murphy" -> "DM"
-	return getInitialsFromCamelCase(curr_persona_name)
-}
-
-const getInitialsFromSnakeCase = (curr_persona_name) => {
-	let rgx = new RegExp(/(\p{L}{1})\p{L}+/, "gu")
-	let initials = [...curr_persona_name.matchAll(rgx)] || []
-	initials = ((initials.shift()?.[1] || "") + (initials.pop()?.[1] || "")).toUpperCase()
-	return initials
-}
-
-const getInitialsFromCamelCase = (curr_persona_name) => {
-	const words = curr_persona_name.match(/[A-Z]*[^A-Z]*/g)
-
-	// Extract the first letter from each word and concatenate them
-	const initials = words.map((word) => word.charAt(0)).join("")
-
-	return initials.toUpperCase()
 }
 
 const updateDirection = (curr_persona, curr_persona_name, direction) => {
@@ -198,6 +147,15 @@ const playAnimation = (character, agentKey, movement_target) => {
 		}
 	}
 }
+function setSpeechBubble(speech_bubbles, agentKey, pronunciatios, character) {
+	const curr_speech_bubble = speech_bubbles[agentKey]
+	const curr_pronunciatio = pronunciatios[agentKey]
+	curr_pronunciatio.x = character.x + PRONUNCIATIO_X_OFFSET
+	curr_pronunciatio.y = character.y + PRONUNCIATIO_Y_OFFSET
+	curr_speech_bubble.x = character.x + SPEECH_BUBBLE_X_OFFSET
+	curr_speech_bubble.y = character.y + SPEECH_BUBBLE_Y_OFFSET
+}
+
 function fillDescription(executeCount, executeCountMax, personas, currentMovements) {
 	if (executeCount == executeCountMax) {
 		for (let agentKey in personas) {
