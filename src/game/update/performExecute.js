@@ -79,10 +79,11 @@ export const performExecutePhase = (
 			let pronunciatioContent = getPronunciatioContent(emojiCode)
 
 			let initials = getInitials(agentKey)
-			// pronunciatios[agentKey].setText(initials + ": " + pronunciatioContent)
-			setPronunciatios((prev) => ({
-				...prev,
-				...{ [agentKey]: initials + ": " + pronunciatioContent },
+			const pronun = pronunciatios[agentKey]
+			pronun.setText(initials + ": " + pronunciatioContent)
+			setPronunciatios((pronunciatios) => ({
+				...pronunciatios,
+				...{ [agentKey]: pronunciatios[agentKey] },
 			}))
 		}
 

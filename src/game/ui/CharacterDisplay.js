@@ -1,5 +1,15 @@
 export const CharacterDisplay = ({ agent, pronunciatios }) => {
-	console.log("pronun", pronunciatios)
+	const getEmoji = () => {
+		if (pronunciatios[agent.key]) {
+			const content = pronunciatios[agent.key].text
+			const parts = content.split(":")
+			const emoji = parts[1]
+			return emoji
+		}
+		return ""
+	}
+
+	console.log("pronun", agent, pronunciatios)
 	return (
 		agent && (
 			<div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
@@ -9,7 +19,7 @@ export const CharacterDisplay = ({ agent, pronunciatios }) => {
 					style={{ width: "2em" }}
 				></img>
 				<div>{agent.name}</div>
-				<div>{pronunciatios[agent.agentKey]}</div>
+				<div>{getEmoji()}</div>
 			</div>
 		)
 	)

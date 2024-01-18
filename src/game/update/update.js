@@ -195,7 +195,6 @@ const performProcessPhase = async (
 		SimulationsApi.step(simulationId).then((newMovements) => {
 			movements = { ...movements, ...newMovements }
 		})
-		console.log("movementos", step, movements)
 	}
 
 	phase = "update"
