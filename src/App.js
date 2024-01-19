@@ -1,13 +1,16 @@
 import React from "react"
 import Game from "./game/game"
-import { PronunciatioProvider } from "./game/pronunciatioContext"
+import { PronunciatiosProvider } from "./hooks/usePronunciatiosContext"
+import { MovementsProvider } from "./hooks/useMovementsContext"
 
 function App() {
 	return (
 		<div className='App'>
-			<PronunciatioProvider>
-				<Game />
-			</PronunciatioProvider>
+			<MovementsProvider>
+				<PronunciatiosProvider>
+					<Game />
+				</PronunciatiosProvider>
+			</MovementsProvider>
 		</div>
 	)
 }

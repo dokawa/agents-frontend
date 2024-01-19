@@ -2,11 +2,12 @@ import React, { useEffect, useRef, useState } from "react"
 import Phaser from "phaser"
 import { CAMERA_MODE, STEP } from "../constants"
 import { getConfig } from "../config/config"
-import { MainPage } from "./MainPage"
+import { MainPage } from "./ui/MainPage"
 import SimulationsApi from "../api/SimulationsApi"
 import humps from "humps"
 import { TILE_WIDTH, PLAY_SPEED } from "../constants"
-import { usePronunciatioContext } from "./pronunciatioContext"
+import { usePronunciatiosContext } from "../hooks/usePronunciatiosContext"
+import { useMovementsContext } from "../hooks/useMovementsContext"
 
 export const Game = () => {
 	const mapRef = useRef()
@@ -14,7 +15,12 @@ export const Game = () => {
 	const stepRef = useRef(STEP)
 	const cameraModeRef = useRef([undefined, undefined]) // (MODE, character)
 
-	const pronunciatioContext = usePronunciatioContext()
+	// It is not a ref because it needs to trigger render for ui
+	const pronunciatiosContext = usePronunciatiosContext()
+	const pronunciatiosRef = useRef({})
+
+	const movementsContext = useMovementsContext()
+	const movementsRef = useRef({})
 
 	const executeCountMax = TILE_WIDTH / PLAY_SPEED
 	const executeCount = {}
@@ -23,8 +29,6 @@ export const Game = () => {
 	const simulationId = 1
 
 	const [agents, setAgents] = useState(undefined)
-
-	// const pronunciatios = {}
 
 	console.log(agents)
 
@@ -67,6 +71,7 @@ export const Game = () => {
 
 	const finishExecuteCount = (agentKey) => {
 		executeCount[agentKey] = executeCountMax + 1
+		console.log("finish", executeCount)
 	}
 
 	const onCharacterClick = (character) => {
@@ -75,8 +80,10 @@ export const Game = () => {
 
 	const config = getConfig(
 		agents,
-		pronunciatioContext.pronunciatios,
-		pronunciatioContext.setPronunciatios,
+		movementsContext.movements,
+		movementsContext.setMovements,
+		pronunciatiosContext.pronunciatios,
+		pronunciatiosContext.setPronunciatios,
 		simulationId,
 		playerRef,
 		cameraModeRef,
@@ -106,7 +113,8 @@ export const Game = () => {
 	return (
 		<MainPage
 			agents={agents}
-			pronunciatios={pronunciatioContext.pronunciatios}
+			pronunciatios={pronunciatiosContext.pronunciatios}
+			movements={movementsContext.movements[stepRef.current]}
 			onCharacterClick={onCharacterClick}
 		/>
 	)

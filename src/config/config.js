@@ -14,6 +14,8 @@ var speech_bubbles = {}
 
 export const getConfig = (
 	agents,
+	movements,
+	setMovements,
 	pronunciatios,
 	setPronunciatios,
 	simulationId,
@@ -43,6 +45,8 @@ export const getConfig = (
 		update: updateGenerator(
 			simulationId,
 			agents,
+			movements,
+			setMovements,
 			speech_bubbles,
 			pronunciatios,
 			setPronunciatios,

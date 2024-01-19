@@ -11,11 +11,12 @@ let sec_per_step = SEC_PER_STEP
 // let sim_code = "{{sim_code}}";
 let step_size = sec_per_step * 1000 // 10 seconds = 10000
 let requested
-let movements
 
 export const updateGenerator = (
 	simulationId,
 	personas,
+	movements,
+	setMovements,
 	speech_bubbles,
 	pronunciatios,
 	setPronunciatios,
@@ -38,7 +39,8 @@ export const updateGenerator = (
 		const player = playerRef.current
 		const inputKeyboard = this.input.keyboard
 
-		let curr_maze = "the_ville"
+		// TODO maybe select map
+		// let curr_maze = "the_ville"
 
 		// TODO figure out what is this
 		let sim_code = "ABCD"
@@ -54,7 +56,7 @@ export const updateGenerator = (
 		// and "execute." These phases are determined by the value of <phase>.
 		// Only one of the three phases is incurred in each update cycle.
 		if (phase == "process") {
-			phase = performProcessPhase(simulationId, step, sim_code, personas, curr_maze, tileWidth, phase)
+			phase = performProcessPhase(simulationId, movements, setMovements, step, phase)
 			console.log("process")
 			// TODO fix update logic
 		} else if (phase == "update") {
@@ -116,15 +118,7 @@ const setupPlayAndPauseButtons = (play_context) => {
 	}
 }
 
-const performProcessPhase = async (
-	simulationId,
-	step,
-	sim_code,
-	personas,
-	curr_maze,
-	tileWidth,
-	phase,
-) => {
+const performProcessPhase = (simulationId, movements, setMovements, step, phase) => {
 	// if (!requested && canMakeRequest(step)) {
 	// 	requested = true
 	// 	movements = await SimulationsApi.step(simulationId)
@@ -132,13 +126,15 @@ const performProcessPhase = async (
 	// 	requested = false
 	// }
 
-	if (!movements || !(step in movements)) {
+	if (movements.length == 0 || !(step in movements)) {
+		console.log("if")
 		SimulationsApi.step(simulationId).then((newMovements) => {
-			movements = { ...movements, ...newMovements }
+			console.log("newmov", newMovements)
+
+			setMovements((prev) => ({ ...prev, ...newMovements }))
+			// setMovements("huehuehue")
 		})
 	}
-
-	console.log("movements", movements)
 
 	phase = "update"
 	return phase
@@ -174,7 +170,7 @@ function performUpdatePhase(step, phase, sim_code) {
 	return phase
 }
 
-const canMakeRequest = (step) => {
+const canMakeRequest = (step, movements) => {
 	// If our step is not past the movements length
 	if (movements) {
 		return step > Object.keys(movements).length

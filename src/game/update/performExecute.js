@@ -6,7 +6,6 @@ import {
 	SPEECH_BUBBLE_Y_OFFSET,
 	TILE_WIDTH,
 } from "../../constants"
-import humps from "humps"
 import { getInitials, getPronunciatioContent } from "./utils"
 
 const movement_speed = PLAY_SPEED

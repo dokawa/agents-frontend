@@ -1,6 +1,6 @@
 import { getInitials } from "../update/utils"
 
-export const CharacterDisplay = ({ agent, pronunciatios, onCharacterClick }) => {
+export const CharacterDisplay = ({ agent, onCharacterClick }) => {
 	const getEmoji = () => {
 		if (pronunciatios[agent.key]) {
 			const content = pronunciatios[agent.key].text
@@ -9,6 +9,12 @@ export const CharacterDisplay = ({ agent, pronunciatios, onCharacterClick }) => 
 			return emoji
 		}
 		return ""
+	}
+
+	const getPosition = () => {
+		const tile = movements && movements[agent.key] && movements[agent.key].movement
+		console.log("tile", tile)
+		return tile ? `(${tile[0]}, ${tile[1]})` : "(NA, NA)"
 	}
 
 	return (
@@ -22,8 +28,8 @@ export const CharacterDisplay = ({ agent, pronunciatios, onCharacterClick }) => 
 				></img>
 				<div style={{ width: "2em" }}>{getInitials(agent.name)}</div>
 				<div>{getEmoji()}</div>
-				<div style={{ width: "5em" }}>{`(${agent.currTile[0]}, ${agent.currTile[1]})`}</div>
-				<div style={{ width: "5em" }}>{agent.plan.description}</div>
+				<div style={{ width: "6em" }}>{getPosition()}</div>
+				<div style={{ width: "20em" }}>{agent.plan.description}</div>
 			</div>
 		)
 	)
