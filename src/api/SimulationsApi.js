@@ -14,4 +14,8 @@ export default class SimulationsApi {
 	static resetCount(simulationId) {
 		return axios.get(`${simulationsApiBaseURL}/simulation/${simulationId}/reset_count/`)
 	}
+
+	static reset(simulationId) {
+		return axios.get(`${simulationsApiBaseURL}/simulation/${simulationId}/reset/`)
+	}
 }

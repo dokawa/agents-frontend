@@ -46,7 +46,7 @@ export const updateGenerator = (
 
 		let play_context = this
 
-		setupPlayAndPauseButtons(play_context)
+		setupPlayAndPauseButtons(play_context, simulationId)
 
 		console.log("movements", movements)
 
@@ -101,19 +101,26 @@ export const updateGenerator = (
 	}
 
 // TODO maybe can be refactored to ui
-const setupPlayAndPauseButtons = (play_context) => {
-	var play_button = document.getElementById("play_button")
-	var pause_button = document.getElementById("pause_button")
+const setupPlayAndPauseButtons = (play_context, simulationId) => {
+	var playButton = document.getElementById("play-button")
+	var pauseButton = document.getElementById("pause-button")
+	var resetButton = document.getElementById("reset-button")
 
-	if (play_button) {
-		play_button.onclick = () => {
+	if (playButton) {
+		playButton.onclick = () => {
 			play_context.scene.resume()
 		}
 	}
 
-	if (pause_button) {
-		pause_button.onclick = () => {
+	if (pauseButton) {
+		pauseButton.onclick = () => {
 			play_context.scene.pause()
+		}
+	}
+
+	if (resetButton) {
+		resetButton.onclick = async () => {
+			await SimulationsApi.reset(simulationId)
 		}
 	}
 }
@@ -128,8 +135,6 @@ const performProcessPhase = (simulationId, step, phase) => {
 
 	if (movements.length == 0 || !(step in movements)) {
 		SimulationsApi.step(simulationId).then((newMovements) => {
-			console.log("newmov", newMovements)
-
 			movements = newMovements
 		})
 	}

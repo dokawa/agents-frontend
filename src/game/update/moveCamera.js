@@ -14,8 +14,7 @@ export const moveCamera = (
 	// map to the actual movement.
 	const mode = cameraModeRef.current[0]
 
-	if (inputKeyboard.addKey("ESC").isDown) {
-		console.log("eeeesesssc")
+	if (isMoving(inputKeyboard)) {
 		cameraModeRef.current = [CAMERA_MODE.FREE_MOVEMENT, player]
 	}
 
@@ -26,6 +25,15 @@ export const moveCamera = (
 	} else {
 		cameraFreeMovement(player, inputKeyboard, canvasWidth, canvasHeight, tileWidth)
 	}
+}
+
+const isMoving = (inputKeyboard) => {
+	return (
+		inputKeyboard.addKey("A").isDown ||
+		inputKeyboard.addKey("S").isDown ||
+		inputKeyboard.addKey("D").isDown ||
+		inputKeyboard.addKey("F").isDown
+	)
 }
 
 const cameraFreeMovement = (player, inputKeyboard, canvasWidth, canvasHeight, tileWidth) => {

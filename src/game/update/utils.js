@@ -1,4 +1,4 @@
-export const getPronunciatioContent = (emojiCode) => {
+export const formatEmoji = (emojiCode) => {
 	const emojiValue = parseInt(emojiCode, 16)
 	return !isNaN(emojiValue) ? String.fromCodePoint(emojiValue) : ""
 }

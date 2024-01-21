@@ -12,11 +12,11 @@ export const CharacterDisplay = ({ agent, onCharacterClick }) => {
 					onClick={() => onCharacterClick(agent.character)}
 				></img>
 				<div style={{ width: "2em" }}>{getInitials(agent.name)}</div>
-				<div id={getTagIdName(agent.key, "pronunciatio")}></div>
+				<div id={getTagIdName(agent.key, "pronunciatio")} style={{ width: "1.5em" }}></div>
 				<div id={getTagIdName(agent.key, "position")} style={{ width: "6em" }}>
 					{"(NA, NA)"}
 				</div>
-				<div className='' style={{ width: "20em" }}></div>
+				<div id={getTagIdName(agent.key, "plan-description")} style={{ width: "20em" }}></div>
 			</div>
 		)
 	)

@@ -62,7 +62,6 @@ export const Game = () => {
 
 	const finishExecuteCount = (agentKey) => {
 		executeCount[agentKey] = executeCountMax + 1
-		console.log("finish", executeCount)
 	}
 
 	const onCharacterClick = (character) => {

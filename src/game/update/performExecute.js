@@ -6,7 +6,7 @@ import {
 	SPEECH_BUBBLE_Y_OFFSET,
 	TILE_WIDTH,
 } from "../../constants"
-import { getInitials, getPronunciatioContent, getTagIdName } from "./utils"
+import { getInitials, formatEmoji, getTagIdName } from "./utils"
 import { getEmoji } from "./utils"
 
 const movement_speed = PLAY_SPEED
@@ -65,7 +65,7 @@ export const performExecutePhase = (
 
 			const emojiCode = agentAction["pronunciatio"]
 
-			const pronunciatioContent = getPronunciatioContent(emojiCode)
+			const pronunciatioContent = formatEmoji(emojiCode)
 
 			const initials = getInitials(agentKey)
 			const pronun = pronunciatios[agentKey]
@@ -147,15 +147,22 @@ const setSpeechBubble = (speech_bubbles, agentKey, pronunciatios, character) => 
 }
 
 const fillCharactersMenu = (agents, currentMovements, pronunciatios) => {
+	console.log("agents", agents)
 	agents.map((agent) => {
 		const agentKey = agent.key
-		const movement = currentMovements[agentKey]["movement"]
+		const movement = currentMovements?.[agentKey]?.["movement"]
 		const pronunciatio = pronunciatios[agentKey]
 
 		// TODO add target address
 
-		document.getElementById(getTagIdName(agentKey, "position")).innerHTML =
-			`(${movement[0]}, ${movement[1]})`
+		if (movement) {
+			document.getElementById(getTagIdName(agentKey, "position")).innerHTML =
+				`(${movement[0]}, ${movement[1]})`
+		}
 		document.getElementById(getTagIdName(agentKey, "pronunciatio")).innerHTML = getEmoji(pronunciatio)
+
+		console.log("plan desc", agent.name, agent.plan, agent.plan?.description)
+		document.getElementById(getTagIdName(agentKey, "plan-description")).innerHTML =
+			agent.plan?.description
 	})
 }

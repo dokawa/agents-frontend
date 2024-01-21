@@ -18,15 +18,21 @@ export const MainPage = ({ agents, onCharacterClick }) => {
 					<div className='col-md-4'>
 						<Position x={2} y={3} />
 						<h2 style={{ textAlign: "right" }}>
-							<button id='play_button' type='button' className='btn btn-default'>
+							<button id='play-button' type='button' className='btn btn-default'>
 								<strong style={{ fontSize: "1.2em" }}>
 									<i className='glyphicon glyphicon-play'></i> &nbsp;Play
 								</strong>
 							</button>
 
-							<button id='pause_button' type='button' className='btn btn-default'>
+							<button id='pause-button' type='button' className='btn btn-default'>
 								<strong style={{ fontSize: "1.2em" }}>
 									<i className='glyphicon glyphicon-pause'></i> &nbsp;Pause
+								</strong>
+							</button>
+
+							<button id='reset-button' type='button' className='btn btn-default'>
+								<strong style={{ fontSize: "1.2em" }}>
+									<i className='glyphicon glyphicon-pause'></i> &nbsp;Reset
 								</strong>
 							</button>
 						</h2>
