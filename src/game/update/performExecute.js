@@ -151,6 +151,7 @@ const fillCharactersMenu = (agents, currentMovements, pronunciatios) => {
 	agents.map((agent) => {
 		const agentKey = agent.key
 		const movement = currentMovements?.[agentKey]?.["movement"]
+		const plan = currentMovements?.[agentKey]?.["plan"]
 		const pronunciatio = pronunciatios[agentKey]
 
 		// TODO add target address
@@ -160,9 +161,6 @@ const fillCharactersMenu = (agents, currentMovements, pronunciatios) => {
 				`(${movement[0]}, ${movement[1]})`
 		}
 		document.getElementById(getTagIdName(agentKey, "pronunciatio")).innerHTML = getEmoji(pronunciatio)
-
-		console.log("plan desc", agent.name, agent.plan, agent.plan?.description)
-		document.getElementById(getTagIdName(agentKey, "plan-description")).innerHTML =
-			agent.plan?.description
+		document.getElementById(getTagIdName(agentKey, "plan-description")).innerHTML = plan?.description
 	})
 }
